@@ -10,6 +10,7 @@
 - [L-002 — Los subagentes anidados tienen límite de profundidad fijo (5), no configurable](#l-002--los-subagentes-anidados-tienen-límite-de-profundidad-fijo-5-no-configurable)
 - [L-003 — `sonnet` ya es 200K; la variante 1M lleva sufijo `[1m]` y se desactiva con `CLAUDE_CODE_DISABLE_1M_CONTEXT`](#l-003--sonnet-ya-es-200k-la-variante-1m-lleva-sufijo-1m-y-se-desactiva-con-claude_code_disable_1m_context)
 - [L-004 — El 1M se gobierna por alias vía `ANTHROPIC_DEFAULT_<MODELO>_MODEL`, no solo con el interruptor global](#l-004--el-1m-se-gobierna-por-alias-vía-anthropic_default_modelo_model-no-solo-con-el-interruptor-global)
+- [L-005 — El frontmatter `model:` de `foda-progress` se corrompe a `model: model: sonnet`; verificar tras cada edición](#l-005--el-frontmatter-model-de-foda-progress-se-corrompe-a-model-model-sonnet-verificar-tras-cada-edición)
 
 ---
 
@@ -41,6 +42,13 @@
 - **Qué pasó:** La doc oficial (`model-config`, sección *Environment variables*) aclara que el sufijo `[1m]` **se lee por variable, no global**: `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL` controlan a qué modelo (y con/ sin `[1m]`) resuelve **cada alias** por separado. Fijando `ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-6` (sin `[1m]`), el alias `sonnet` queda en 200K sin tocar Opus.
 - **Lección:** El 1M no es todo-o-nada. Se puede tener **Opus 1M + Sonnet 200K** simultáneamente anclando cada alias por su variable. Esto **supera** a `CLAUDE_CODE_DISABLE_1M_CONTEXT` (D-006), que era el martillo global.
 - **Cómo aplicar:** Para cualquier comando/agente del motor, elige el modelo por **alias** (`haiku`/`sonnet`/`opus`) en el frontmatter, y gobierna su ventana con `ANTHROPIC_DEFAULT_<MODELO>_MODEL` en `.claude/settings.json`. Para forzar 1M, añade `[1m]` a esa variable; para 200K, omítelo. Ver `D-008`.
+- **Fecha:** 2026-06-27
+
+### L-005 — El frontmatter `model:` de `foda-progress` se corrompe a `model: model: sonnet`; verificar tras cada edición
+- **Contexto:** Al ejecutar `/foda-progress` (con Haiku, no Sonnet) se revisó el repo y el `git diff` mostró el frontmatter de `foda-progress.md` modificado.
+- **Qué pasó:** La línea había quedado como `model: model: sonnet` (el prefijo `model:` duplicado). Es la **segunda vez** que se rompe igual (ya se había corregido en D-008). Con esa línea inválida el alias no resuelve y el comando cae en el modelo default heredado (Haiku 4.5) en vez de Sonnet 200K.
+- **Lección:** Las ediciones del valor `model:` en el frontmatter son propensas a duplicar la clave. Un frontmatter inválido degrada silenciosamente el modelo del comando.
+- **Cómo aplicar:** Tras editar cualquier `model:` de un comando, releer las primeras 4 líneas y confirmar que la línea sea exactamente `model: <alias>` (una sola clave). Validar también con el auto-reporte de modelo al invocar `/comando`. Ver `D-008`.
 - **Fecha:** 2026-06-27
 
 <!--
