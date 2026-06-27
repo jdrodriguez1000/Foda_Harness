@@ -13,6 +13,7 @@
 - [D-005 — Subagentes anidados y política de `tools` por instancia A/B/C/Workers](#d-005--subagentes-anidados-y-política-de-tools-por-instancia-abcworkers)
 - [D-006 — Desactivar la ventana de 1M en el proyecto (`CLAUDE_CODE_DISABLE_1M_CONTEXT`)](#d-006--desactivar-la-ventana-de-1m-en-el-proyecto-claude_code_disable_1m_context)
 - [D-007 — Reactivar la ventana de 1M al volver a Opus por defecto](#d-007--reactivar-la-ventana-de-1m-al-volver-a-opus-por-defecto)
+- [D-008 — Anclar el alias `sonnet` a 200K por variable de entorno, conservando Opus 1M](#d-008--anclar-el-alias-sonnet-a-200k-por-variable-de-entorno-conservando-opus-1m)
 
 ---
 
@@ -75,6 +76,14 @@
 - **Decisión:** Quitar `CLAUDE_CODE_DISABLE_1M_CONTEXT` del `env` de `.claude/settings.json` (queda `"env": {}`), reactivando la ventana de 1M en el proyecto. Esto restituye Opus 1M (deseado y sin costo extra).
 - **Alternativas consideradas:** (a) Desactivar solo el 1M de Sonnet — no existe tal granularidad; la variable es global. (b) Mantener `D-006` y aceptar Opus a 200K — descartada por contradecir el objetivo del usuario (aprovechar la ventana de 1M de Opus).
 - **Consecuencias:** Requiere reiniciar la sesión para tomar efecto. La protección de `D-006` contra el consumo de créditos por **Sonnet 1M** se pierde a nivel de selector: el riesgo solo se materializa si alguien **selecciona manualmente** `sonnet[1m]`. Los comandos de sesión siguen protegidos porque están fijados al ID explícito `claude-sonnet-4-6` (200K), que no escala a 1M. Si en el futuro se vuelve a trabajar con Sonnet por defecto, reconsiderar reintroducir `D-006`.
+
+### D-008 — Anclar el alias `sonnet` a 200K por variable de entorno, conservando Opus 1M
+- **Estado:** Aceptada (complementa D-007)
+- **Fecha:** 2026-06-27
+- **Contexto:** Tras `D-007` la sesión principal corre en **Opus 1M** (deseado, sin costo). Pero al invocar `/foda-progress` (`model: sonnet`) el alias `sonnet` resolvía a **Sonnet 1M** y pedía créditos (`API Error: Usage credits required for 1M context`). El default global de `sonnet` del usuario lleva la variante 1M. Se necesita que **solo** Sonnet quede en 200K **sin** desactivar el 1M de Opus.
+- **Decisión:** Agregar `"ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-6"` (sin sufijo `[1m]`) al `env` de `.claude/settings.json`. La doc oficial confirma que el `[1m]` se lee **por variable, no global**: cada alias controla su propia ventana. Así el alias `sonnet` queda anclado a 200K y Opus conserva su 1M (vía picker / auto-upgrade, su propia variable). Se mantiene `model: sonnet` (alias) en `foda-progress` y `model: haiku` en `foda-next`.
+- **Alternativas consideradas:** (a) Reintroducir `CLAUDE_CODE_DISABLE_1M_CONTEXT=1` (D-006) — descartada: es global y mataría también el 1M de Opus, que el usuario quiere conservar. (b) Usar el ID con fecha `claude-sonnet-4-6` directo en el frontmatter — insuficiente: como override no anclaba la ventana y heredaba el 1M de la sesión.
+- **Consecuencias:** Requiere reiniciar para tomar efecto. Opus 1M intacto; `foda-progress` corre Sonnet 200K sin créditos. Patrón reutilizable para cualquier comando/agente del motor: el modelo se elige por alias y su ventana se gobierna por la variable `ANTHROPIC_DEFAULT_<MODELO>_MODEL`. Opcional: anclar también `ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-8[1m]` si se quiere el 1M de Opus explícito (no necesario para la sesión principal). Ver `L-004`.
 
 ---
 

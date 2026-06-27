@@ -5,5 +5,7 @@
     "deny": [],
     "ask": []
   },
-  "env": {}
+  "env": {
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-6"
+  }
 }
