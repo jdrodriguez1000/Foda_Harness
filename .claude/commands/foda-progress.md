@@ -1,6 +1,6 @@
 ---
 description: Protocolo de cierre de sesión del motor FODA — actualiza la persistencia, hace commit y push
-model: haiku
+model: claude-sonnet-4-6
 ---
 
 # foda-progress — Protocolo de cierre de sesión
