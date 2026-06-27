@@ -39,6 +39,8 @@ científico de datos como revisor/aprobador.
 | 2026-06-27 | Creado `CLAUDE.md` con las instrucciones para todos los agentes de Claude Code. |
 | 2026-06-27 | Creada la carpeta `.claude/` con `commands/` y los settings de proyecto y local. |
 | 2026-06-27 | Creados los comandos `foda-progress` (cierre de sesión) y `foda-next` (inicio de sesión). |
+| 2026-06-27 | Inicializado git (rama `main`), agregado `.gitignore`, conectado remoto y primer commit + push (`8df2967`). |
+| 2026-06-27 | Agregado `.gitattributes` y fijado `model: sonnet` en los comandos de sesión. |
 
 ## Próximo paso
 

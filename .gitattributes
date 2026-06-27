@@ -1,0 +1,20 @@
+# Normaliza los fines de línea: en el repo se guardan como LF.
+* text=auto eol=lf
+
+# Scripts de shell siempre LF (el instalador de la instancia corre en POSIX/Git Bash).
+*.sh text eol=lf
+
+# Scripts de Windows siempre CRLF.
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Archivos binarios: sin conversión de fin de línea.
+*.pkl  binary
+*.joblib binary
+*.h5   binary
+*.parquet binary
+*.xlsx binary
+*.png  binary
+*.jpg  binary
+*.pdf  binary
