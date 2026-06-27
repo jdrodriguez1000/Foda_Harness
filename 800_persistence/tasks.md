@@ -29,7 +29,7 @@ _(ninguna)_
 
 | ID | Estado | Tarea |
 |----|--------|-------|
-| T-002 | `[ ]` | Definir la estructura de carpetas del motor FODA (definiciones canónicas, namespace privado, esqueleto de instancia). |
+| T-002 | `[ ]` | Definir la estructura de carpetas del motor FODA (definiciones canónicas, namespace privado, esqueleto de instancia). _(Se reorienta con base en T-011.)_ |
 | T-003 | `[ ]` | Diseñar el instalador `install.sh` (copia de definiciones, init de git, esqueleto de entrada). |
 
 ## Completadas
@@ -44,3 +44,4 @@ _(ninguna)_
 | T-008 | `[x]` | Agregar `.gitattributes` (normalización de fines de línea LF/CRLF y binarios). | 2026-06-27 |
 | T-009 | `[x]` | Fijar `model: sonnet` en los comandos `foda-progress` y `foda-next`. | 2026-06-27 |
 | T-010 | `[x]` | Agregar línea de auto-reporte de modelo en `foda-progress` y `foda-next` para verificar el modelo en ejecución. | 2026-06-27 |
+| T-011 | `[x]` | Adaptar `950_guideline/methodology.md` a la estructura FODA (13 flujos = fases; planos `foda-/fda-`; bronze/silver/gold; subagentes anidados D-005/L-002; renombre `claude-progress.txt`→`project-progress.txt` y estado `fda-*`). | 2026-06-27 |

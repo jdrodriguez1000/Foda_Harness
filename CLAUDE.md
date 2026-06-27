@@ -61,7 +61,7 @@ Convención de IDs: tareas `T-XXX`, lecciones `L-XXX`, decisiones `D-XXX`. Mante
 
 ## 4. El flujo objetivo (la tubería)
 
-La instancia ejecuta ~13 flujos encadenados, cada uno operado por un agente de IA con artefactos
+La instancia ejecuta ~14 flujos encadenados, cada uno operado por un agente de IA con artefactos
 canónicos (ver detalle en `990_documents/expected_workflow.md`):
 
 1. **Discovery** → `client_register.yaml`, `business_hypothesis.md`, `contract_data.json`
@@ -75,8 +75,9 @@ canónicos (ver detalle en `990_documents/expected_workflow.md`):
 9. **Modelling** (torneo de campeones) → `best_model.pkl`
 10. **Inferences** → `inferences.json` (con MAPE por período)
 11. **Simulation** (Montecarlo) → optimista / moderado / pesimista + demanda simulada
-12. **Reporting** → `reporting.json` (márgenes, costo de oportunidad, inventario de seguridad)
-13. **Monitoring** → `monitoring.json` · **Alerting** → `alerting.json`
+12. **Scenarios** (¿qué pasa si…?) → `scenarios.json` (simula escenarios usando *Inferences* + *Simulation*)
+13. **Reporting** → `reporting.json` (márgenes, costo de oportunidad, inventario de seguridad)
+14. **Monitoring** → `monitoring.json` · **Alerting** → `alerting.json`
 
 Arquitectura de datos en la instancia: **bronze** (crudo inalterable) → **silver** (limpio) →
 **gold** (derivado/listo para ML).

@@ -150,6 +150,12 @@ El flujo esperado será:
     6	2001	2336	2458	478
     
 
+Flujo Scenarios (¿qué pasa si...?)
+    a. Este flujo se ejecuta despues del flujo simulation y consiste en responder preguntas del tipo "¿que pasa si...?".
+    b. Un agente de IA podra simular diferentes escenarios de negocio teniendo en cuenta la informacion entregada por el flujo inferences y el flujo simulation.
+    c. (Por ahora solo se registra el flujo; el detalle de entradas, reglas y artefactos se definira mas adelante.)
+
+
 11. Flujo Reporting
     a. Este flujo consiste en la creacion de informes de la demanda simulada de los productos, con base en los resultados obtenidos en el flujo simulation.  
     b. Se espera en esta etapa tener informacion como:
