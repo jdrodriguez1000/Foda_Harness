@@ -5,6 +5,9 @@ model: sonnet
 
 # foda-next — Protocolo de inicio de sesión
 
+> **Auto-reporte de modelo:** antes de comenzar, indica explícitamente con qué modelo se está
+> ejecutando este comando (ej. "Ejecutando con Sonnet 4.6").
+
 Ejecuta el **inicio de sesión** del proyecto que construye el motor FODA: recupera el estado del
 proyecto desde la memoria de construcción para saber qué se hizo, dónde estamos y qué sigue.
 

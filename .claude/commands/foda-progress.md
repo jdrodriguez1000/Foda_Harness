@@ -5,6 +5,9 @@ model: sonnet
 
 # foda-progress — Protocolo de cierre de sesión
 
+> **Auto-reporte de modelo:** antes de comenzar, indica explícitamente con qué modelo se está
+> ejecutando este comando (ej. "Ejecutando con Sonnet 4.6").
+
 Ejecuta el **cierre de sesión** del proyecto que construye el motor FODA: deja la memoria de
 construcción al día y sincroniza el repositorio remoto.
 
