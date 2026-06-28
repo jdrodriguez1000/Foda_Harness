@@ -39,12 +39,17 @@ Scenarios, Reporting, Monitoring); fijadas las **configs de autoría humana** `m
 `simulation_config.yaml`, `scenarios_config.yaml` con la convención `<flujo>_config.yaml` y el principio
 "reglas como dato" (`D-019`); resuelto que los **parámetros financieros** de Reporting se **leen de
 bronze** (`D-019`); `075` agrupa **Monitoring + Alerting** y cierra el ciclo. Todos los briefs aprobados.
-**Cerrado en la última sesión:** definido el **método de construcción por vertical slice** (`D-021`):
+**Cerrado en sesiones recientes:** definido el **método de construcción por vertical slice** (`D-021`):
 dos niveles (banda → `slice_contract`; celda flujo×banda → diseñar/ejecutar/probar/verificar), estructura
 de carpetas `705_design/`/`710_plan/`/`720_build/<banda>/<flujo>/` espejo de Caden, y el **protocolo
 agéntico del paso "Definir"** (sesión principal A + escritor + revisor independiente + gate humano).
-Aclarado que las **bandas son madurez del motor, no estado de la instancia**.
-**Próximo paso:** **T-017** — escribir el `slice_contract` del Tracer Bullet (L0 de los 14 flujos + `TR-*` sobre C1).
+Aclarado que las **bandas son madurez del motor, no estado de la instancia**. **Creadas y aprobadas las
+dos plantillas del paso "Definir"**: `710_plan/foda-slice-contract-template.md` (contrato de banda:
+tabla de peldaño L por flujo, transversales `TR-*`, Done end-to-end, gate P5) y
+`710_plan/foda-bdd-template.md` (BDD end-to-end de banda + checklist de trazabilidad scope↔bdd del revisor).
+Con esto el carril `710_plan/` queda sembrado.
+**Próximo paso:** **T-017** — escribir a mano el primer `slice_contract` + `bdd.md` del Tracer Bullet
+(L0 de los 14 flujos + `TR-*` sobre C1), usando las plantillas recién aprobadas.
 
 ## Hitos completados
 
@@ -74,16 +79,20 @@ Aclarado que las **bandas son madurez del motor, no estado de la instancia**.
 | 2026-06-28 | **Creado el mapa de procesos oficial** `700_brief/000_general_process.md` (`D-018`): entradas/salidas por workflow (`010`–`045`) + tabla maestra, con **nombres canónicos en inglés** de todos los artefactos. Se fijaron los que faltaban: `data_health.json` (Profiling), `ingestion_report.json` (Ingestion), `problem_statement.md` / `data_structure.md` (Discovery). Movido desde `Template/` y actualizados los briefs `010`/`020`/`025` para coincidir. |
 | 2026-06-28 | **Completados los 14 briefs (Fase 0 cerrada)**: redactados `050_modelling`, `055_inferences`, `060_simulation`, `065_scenarios`, `070_reporting`, `075_monitoring`. **Los 14 briefs aprobados** (`010`–`075`). Configs humanas `<flujo>_config.yaml` (`modelling`/`simulation`/`scenarios`) y parámetros financieros de Reporting desde bronze (`D-019`). Mapa de procesos `000_general_process.md` completo (14/14); `roadmap.md` con *Brief* = `aprobado` en las 14 filas. |
 | 2026-06-28 | **Definido el método de construcción por vertical slice** (`D-021`) tras estudiar el método de Caden (`700_brief→705_design→710_plan→720_build` + ciclo A/B/C). **Dos niveles**: banda (`slice_contract`) y celda flujo×banda (diseñar/ejecutar/probar/verificar sobre golden client C1). Estructura de carpetas espejo de Caden con eje banda. **Protocolo agéntico del paso "Definir"** (escritor/revisor independiente/gate humano) como plantilla. Aclarado: **bandas = madurez del motor, no estado de la instancia**; el `slice_contract` = formalización de la columna de la banda en `roadmap.md` (= entregable de `T-017`). |
+| 2026-06-28 | **Creadas y aprobadas las dos plantillas del paso "Definir"** (`D-021`): `710_plan/foda-slice-contract-template.md` (contrato de banda — tabla de peldaño L por los 14 flujos, andamiaje transversal `TR-1..TR-4`, golden client C1, BDD companion, Done end-to-end, gate P5) y `710_plan/foda-bdd-template.md` (BDD end-to-end de banda en Gherkin: escenario central de recorrido completo + hitos críticos atados a invariantes `D-020` + **checklist de trazabilidad scope↔bdd** que usa el revisor). Aprobadas por el usuario. Carril `710_plan/` sembrado. |
 
 ## Próximo paso
 
 Fase 0 (`D-015`) cerrada: los 14 briefs aprobados, mapa de procesos completo y **método de construcción
 por vertical slice fijado** (`D-021`). Sigue la Fase 1:
 
-1. **T-017 — Escribir el `slice_contract` del Tracer Bullet** (`D-021` nivel banda): qué peldaño L0 de
-   cada uno de los 14 flujos **y de las transversales `TR-1..TR-4`** entra, el **orden de la tubería** y el
-   **Done end-to-end** (reporte que C1 valida). Es la formalización de la columna *Tracer Bullet* de
-   `roadmap.md`. Insumo: los 14 briefs aprobados + `000_general_process.md`. Respetar invariantes de `D-020`.
+1. **T-017 — Escribir a mano el `slice_contract` + `bdd.md` del Tracer Bullet** (`D-021` nivel banda),
+   usando las **plantillas ya aprobadas** (`710_plan/foda-slice-contract-template.md` y
+   `710_plan/foda-bdd-template.md`). Definir qué peldaño L0 de cada uno de los 14 flujos **y de las
+   transversales `TR-1..TR-4`** entra, el **orden de la tubería** y el **Done end-to-end** (reporte que
+   C1 valida). Es la formalización de la columna *Tracer Bullet* de `roadmap.md`. Insumo: los 14 briefs
+   aprobados + `000_general_process.md`. Respetar invariantes de `D-020`. Al terminar el borrador,
+   pasarlo por un **revisor en contexto fresco** (escritor ≠ revisor, `D-021`).
 2. **T-002 — Crear el árbol de carpetas** según `D-021`: `705_design/`, `710_plan/` y `720_build/` con la
    rama `tracer-bullet/` (celdas por flujo), `_transversal/` y `golden_client/`. Referencia: `Caden_Harness/720_build/` (`L-006`).
 3. Después: construir el Tracer Bullet aplicando el ciclo de `D-021` (incl. el protocolo agéntico

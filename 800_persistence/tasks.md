@@ -60,3 +60,4 @@
 | T-018 | `[x]` | Crear la plantilla de brief FODA (`D-016`): estructura de Caden + sección **"Escalera de capacidades"** (L0→Ln). Creada en `700_brief/foda-brief-template.md`. | 2026-06-28 |
 | T-019 | `[x]` | **Redactar los 14 briefs** (`010`–`075`) con la plantilla, cada uno con su escalera L0→Ln. **Todos aprobados.** Configs humanas fijadas: `modelling_config.yaml`, `simulation_config.yaml`, `scenarios_config.yaml` (`D-019`). | 2026-06-28 |
 | T-020 | `[x]` | **Mantener `700_brief/000_general_process.md` al día** (`D-018`): registradas las entradas/salidas (nombres canónicos en inglés) de los 14 workflows; mapa de procesos completo (14/14). | 2026-06-28 |
+| T-022 | `[x]` | **Crear las plantillas del paso "Definir"** (`D-021`): `710_plan/foda-slice-contract-template.md` (contrato de banda) y `710_plan/foda-bdd-template.md` (BDD end-to-end + checklist scope↔bdd del revisor). **Aprobadas por el usuario.** | 2026-06-28 |
