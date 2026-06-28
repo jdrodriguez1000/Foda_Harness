@@ -28,8 +28,9 @@ científico de datos como revisor/aprobador.
 
 ## Estado actual
 
-**Fase:** Fase 1 de `D-015` — **EN CURSO**: definición del Tracer Bullet. El **`slice_contract.md` + `bdd.md`
-del Tracer Bullet están escritos y APROBADOS** (`703_definition/tracer-bullet/`). (Fase 0 cerrada: 14 briefs aprobados.)
+**Fase:** Fase 1 de `D-015` — **EN CURSO**: construcción del Tracer Bullet. El **`slice_contract.md` + `bdd.md`
+del Tracer Bullet están escritos y APROBADOS** (`703_definition/tracer-bullet/`) y el **árbol de carpetas de
+construcción ya existe** (`705_design/`/`710_plan/`/`720_build/`, T-002). (Fase 0 cerrada: 14 briefs aprobados.)
 **Punto actual:** los 14 briefs (`010`–`075`) viven en `700_brief/`, todos en estado **APROBADO**, cada
 uno con su **escalera de capacidades L0→Ln** (`D-016`). El **mapa de procesos oficial**
 `700_brief/000_general_process.md` está **completo (14/14)**: entradas/salidas por workflow + tabla
@@ -56,8 +57,13 @@ de carpetas `705_design/`/`710_plan/`/`720_build/<banda>/<flujo>/` espejo de Cad
 agéntico del paso "Definir"** (sesión principal A + escritor + revisor independiente + gate humano).
 Aclarado que las **bandas son madurez del motor, no estado de la instancia**. Creadas y aprobadas las
 dos plantillas del paso "Definir" (`703_definition/foda-slice-contract-template.md` y `…/foda-bdd-template.md`).
-**Próximo paso:** **T-002** (árbol de carpetas según `D-021`) o **T-014** (golden client C1 + snapshots),
-que la primera celda del Tracer Bullet necesita antes de empezar a construir.
+**Cerrado en esta sesión:** **T-002 completada** — creado el **árbol de carpetas** del motor (`D-021 §4`):
+carriles `705_design/tracer-bullet/`, `710_plan/tracer-bullet/`, `720_build/tracer-bullet/<flujo>/` con las
+6 subcarpetas (`agents`/`skills`/`schemas`/`contract`/`deliverables`/`evaluation`) para los 14 flujos,
+`720_build/_transversal/{TR-1..TR-4}` y `720_build/golden_client/snapshots/`. README por carril explicando
+su paso del ciclo, convención de nombres y notas. `CLAUDE.md §6` actualizado con la estructura completa.
+**Próximo paso:** **T-014** (golden client C1 + snapshots), prerrequisito de la primera celda (`010_discovery`)
+del Tracer Bullet; o **T-021** (protocolo agéntico de los pasos Diseñar/Planear/Ejecutar/Probar/Verificar).
 
 ## Hitos completados
 
@@ -90,6 +96,7 @@ que la primera celda del Tracer Bullet necesita antes de empezar a construir.
 | 2026-06-28 | **Creadas y aprobadas las dos plantillas del paso "Definir"** (`D-021`): `710_plan/foda-slice-contract-template.md` (contrato de banda — tabla de peldaño L por los 14 flujos, andamiaje transversal `TR-1..TR-4`, golden client C1, BDD companion, Done end-to-end, gate P5) y `710_plan/foda-bdd-template.md` (BDD end-to-end de banda en Gherkin: escenario central de recorrido completo + hitos críticos atados a invariantes `D-020` + **checklist de trazabilidad scope↔bdd** que usa el revisor). Aprobadas por el usuario. Carril `710_plan/` sembrado. |
 | 2026-06-28 | **T-017 — `slice_contract.md` + `bdd.md` del Tracer Bullet escritos y APROBADOS**: 14 flujos en L0 alineados a la letra de cada brief + TR-1/TR-2, orden de tubería, Done end-to-end (margen bruto + cierre de ciclo), hold-out de Monitoring. Ejecutado el protocolo agéntico de "Definir" (`D-021`) con **revisor en contexto fresco**: veredicto inicial `REQUIERE SUBSANACIÓN` (filas con "L0" desalineado del L0 del brief) → **subsanado** alineando 010/050/060/065/070/075 a los briefs y documentando el único desvío (cardinalidad C1). Gate P5 cerrado. Lección `L-009`. |
 | 2026-06-28 | **Enmienda de carriles (`D-021` §4):** creado el carril dedicado **`703_definition/`** para el output del paso **Definir** (banda). Movidos `slice_contract.md` + `bdd.md` del Tracer Bullet y las dos plantillas desde `710_plan/` → `703_definition/` (vía `git mv`). Motivo: `710_plan/` debe guardar el output del paso **Planear** (planes por celda); ubicar ahí el `slice_contract` conflactaba Definir con Planear y lo separaba de su hermano el brief. Un carril por paso del ciclo. Lección `L-010`. |
+| 2026-06-28 | **T-002 — Árbol de carpetas creado (`D-021 §4`):** sembrados los carriles `705_design/tracer-bullet/` y `710_plan/tracer-bullet/` (archivos `<flujo>.md` por celda, a crear al diseñar/planear) y `720_build/tracer-bullet/<flujo>/{agents,skills,schemas,contract,deliverables,evaluation}` para los 14 flujos (010→075). Más `720_build/_transversal/{TR-1..TR-4}` (D-020) y `720_build/golden_client/snapshots/` (D-012/D-014). `README.md` por carril (paso del ciclo, convención, notas) y `.gitkeep` en hojas vacías. `CLAUDE.md §6` actualizado. |
 
 ## Próximo paso
 

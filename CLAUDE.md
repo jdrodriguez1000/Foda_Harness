@@ -101,13 +101,27 @@ Arquitectura de datos en la instancia: **bronze** (crudo inalterable) → **silv
 ```
 Foda_Harness/
 ├── CLAUDE.md              ← este archivo
+├── 700_brief/            ← brief por flujo (escalera L0→Ln, "el menú") + 000_general_process.md
+├── 703_definition/       ← paso DEFINIR: <banda>/{slice_contract.md, bdd.md} + plantillas
+├── 705_design/           ← paso DISEÑAR: <banda>/<flujo>.md (diseño por celda)
+├── 710_plan/             ← paso PLANEAR: <banda>/<flujo>.md (plan por celda)
+├── 720_build/            ← pasos EJECUTAR/PROBAR/VERIFICAR
+│   ├── <banda>/<flujo>/  ← celda: agents/ skills/ schemas/ contract/ deliverables/ evaluation/
+│   ├── _transversal/     ← andamiaje transversal TR-1..TR-4 (D-020)
+│   └── golden_client/    ← cliente de prueba C1 + snapshots (D-012/D-014)
 ├── 800_persistence/       ← memoria de construcción del motor
 │   ├── progress.md
 │   ├── tasks.md
 │   ├── lessons.md
-│   └── decisions.md
+│   ├── decisions.md
+│   └── roadmap.md
+├── 950_guideline/        ← metodología y principios del motor
 └── 990_documents/         ← documentos fuente (estado actual, flujo y solución esperada)
 ```
+
+Carriles `700`–`720` = un carril por paso del ciclo de construcción por **vertical slice** (`D-021`):
+definir → diseñar → planear → ejecutar/probar/verificar. Eje **banda** (`tracer-bullet` → … → `final`,
+`D-017`) × **flujo** (`010_discovery` … `075_monitoring`). Ver el `README.md` de cada carril.
 
 _(La estructura crecerá a medida que se construyan las definiciones canónicas del motor y el
 instalador. Mantener esta sección y `progress.md` al día.)_

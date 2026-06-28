@@ -25,7 +25,7 @@
 
 | ID | Estado | Tarea |
 |----|--------|-------|
-| — | — | _(ninguna en progreso; próxima tarea: **T-002** — árbol de carpetas, o **T-014** — golden client C1)_ |
+| — | — | _(ninguna en progreso; próxima tarea: **T-014** — golden client C1, o **T-021** — protocolo de pasos restantes)_ |
 
 ## Pendientes
 
@@ -36,7 +36,6 @@
 | ID | Estado | Tarea |
 |----|--------|-------|
 | T-017 | `[ ]` | **(PRÓXIMA) Escribir el `slice_contract` del Tracer Bullet** (`D-021` nivel banda; `D-015` Fase 1): qué peldaño (L0) de cada uno de los 14 flujos **y de las filas transversales `TR-1..TR-4`** (`D-020`) entra, el **orden de la tubería** y el **Done end-to-end** (reporte que C1 valida). Es la formalización de la columna *Tracer Bullet* de `roadmap.md`. Respetar los invariantes no deferibles de `D-020`. Insumo: los 14 briefs aprobados (escalera L0→Ln) + `000_general_process.md` + `methodology.md`/`principles.md` (= ambición Ln). |
-| T-002 | `[ ]` | Crear el árbol de carpetas del motor FODA siguiendo `D-021` (§4 enmendada): `703_definition/<banda>/{slice_contract.md,bdd.md}` (ya sembrado para tracer-bullet), `705_design/<banda>/<flujo>.md`, `710_plan/<banda>/<flujo>.md`, `720_build/<banda>/<flujo>/` (`agents/`, `skills/`, `schemas/`, `contract/`, `deliverables/`, `evaluation/`), `720_build/_transversal/` (TR-1..TR-4) y `720_build/golden_client/` (**golden client + snapshots**, `D-012`/`D-014`). Empezar por la rama `tracer-bullet/`. |
 | T-014 | `[ ]` | Diseñar la infraestructura de **golden client + snapshots por capa/artefacto** (`D-012`): cliente de prueba canónico, congelado de bronze/silver/gold y artefactos, versionado de snapshot ligado al contrato upstream. Incluye el **generador sintético parametrizado** por jerarquía producto/geo y nº de series (`D-014`): instanciar C1 (primario) ya, C4 (estrés) y C2/C3 bajo demanda. |
 | T-015 | `[ ]` | Al redactar el brief de Discovery/Onboarding (T-019): los contratos (`client_register.yaml`, `map_client_data.json`) deben capturar el **grain** multinivel de producto (familia→categoría→subcategoría→SKU) y geografía (región→país→ciudad→sede) y propagarlo a la tubería (`D-014`). |
 | T-021 | `[ ]` | **Detallar el protocolo agéntico de los pasos restantes del ciclo `D-021`** (Diseñar, Planear, Ejecutar, Probar, Verificar) con el mismo nivel del paso "Definir" (escritor/revisor independiente/gate, encadenamiento por la sesión principal, tope de iteraciones E5). El paso "Definir" ya quedó especificado en `D-021`. |
@@ -62,3 +61,4 @@
 | T-020 | `[x]` | **Mantener `700_brief/000_general_process.md` al día** (`D-018`): registradas las entradas/salidas (nombres canónicos en inglés) de los 14 workflows; mapa de procesos completo (14/14). | 2026-06-28 |
 | T-022 | `[x]` | **Crear las plantillas del paso "Definir"** (`D-021`): `703_definition/foda-slice-contract-template.md` (contrato de banda) y `703_definition/foda-bdd-template.md` (BDD end-to-end + checklist scope↔bdd del revisor). **Aprobadas por el usuario.** | 2026-06-28 |
 | T-017 | `[x]` | **Escribir el `slice_contract` + `bdd.md` del Tracer Bullet** (`D-021` nivel banda; `D-015` Fase 1) en `703_definition/tracer-bullet/`: 14 flujos en L0 (alineados a la letra de cada brief) + transversales TR-1/TR-2, orden de tubería, Done end-to-end, hold-out de Monitoring. Revisado en contexto fresco (veredicto `REQUIERE SUBSANACIÓN` → subsanado alineando L0 slice↔briefs) y **APROBADO** por el usuario (gate P5). | 2026-06-28 |
+| T-002 | `[x]` | **Crear el árbol de carpetas** del motor FODA (`D-021 §4`): `705_design/tracer-bullet/`, `710_plan/tracer-bullet/`, `720_build/tracer-bullet/<flujo>/{agents,skills,schemas,contract,deliverables,evaluation}` para los 14 flujos, `720_build/_transversal/{TR-1..TR-4}` y `720_build/golden_client/snapshots/`. README por carril. `.gitkeep` en hojas vacías. | 2026-06-28 |
