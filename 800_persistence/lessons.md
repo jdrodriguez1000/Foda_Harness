@@ -11,6 +11,7 @@
 - [L-003 — `sonnet` ya es 200K; la variante 1M lleva sufijo `[1m]` y se desactiva con `CLAUDE_CODE_DISABLE_1M_CONTEXT`](#l-003--sonnet-ya-es-200k-la-variante-1m-lleva-sufijo-1m-y-se-desactiva-con-claude_code_disable_1m_context)
 - [L-004 — El 1M se gobierna por alias vía `ANTHROPIC_DEFAULT_<MODELO>_MODEL`, no solo con el interruptor global](#l-004--el-1m-se-gobierna-por-alias-vía-anthropic_default_modelo_model-no-solo-con-el-interruptor-global)
 - [L-005 — El frontmatter `model:` de `foda-progress` se corrompe a `model: model: sonnet`; verificar tras cada edición](#l-005--el-frontmatter-model-de-foda-progress-se-corrompe-a-model-model-sonnet-verificar-tras-cada-edición)
+- [L-006 — Caden es nuestro harness de referencia validado; reutilizar su patrón antes de reinventar](#l-006--caden-es-nuestro-harness-de-referencia-validado-reutilizar-su-patrón-antes-de-reinventar)
 
 ---
 
@@ -49,6 +50,13 @@
 - **Qué pasó:** La línea había quedado como `model: model: sonnet` (el prefijo `model:` duplicado). Es la **segunda vez** que se rompe igual (ya se había corregido en D-008). Con esa línea inválida el alias no resuelve y el comando cae en el modelo default heredado (Haiku 4.5) en vez de Sonnet 200K.
 - **Lección:** Las ediciones del valor `model:` en el frontmatter son propensas a duplicar la clave. Un frontmatter inválido degrada silenciosamente el modelo del comando.
 - **Cómo aplicar:** Tras editar cualquier `model:` de un comando, releer las primeras 4 líneas y confirmar que la línea sea exactamente `model: <alias>` (una sola clave). Validar también con el auto-reporte de modelo al invocar `/comando`. Ver `D-008`.
+- **Fecha:** 2026-06-27
+
+### L-006 — Caden es nuestro harness de referencia validado; reutilizar su patrón antes de reinventar
+- **Contexto:** Al decidir la arquitectura de agentes de FODA (B/C genéricos vs por flujo, anidado vs plano) revisamos el harness **Caden** (`C:\Users\USUARIO\Documents\TripleS\Caden_Harness`), un motor hermano que resuelve el mismo problema (construir software por Vertical Slices encadenando "arneses" = nuestros flujos) y ya tiene 2 de 6 arneses validados en seco.
+- **Qué pasó:** Caden ya había resuelto y probado decisiones que en FODA estaban abiertas o mal apostadas: (1) **modelo plano** A-spawnea-todo en vez de anidamiento (robusto a versiones de Claude Code); (2) **B y C por flujo** con cadena/rúbrica embebidas; (3) método de construcción **brief→diseño→plan→build** flujo por flujo; (4) **carpeta autocontenida por flujo** + transversales en la raíz; (5) **persistencia mixta** (transversal `harness-state.json`+`knowledge/` vs por-flujo `execution-state`+`project-progress`); (6) instalador que copia definiciones y separa plantillas `.template.` de instancias. Nuestro `D-005` (anidamiento) contradecía lo que Caden demostró mejor → se reemplazó por `D-009`.
+- **Lección:** Caden es la **referencia canónica** de FODA. Antes de diseñar un componente nuevo del motor, revisar cómo lo resolvió Caden; comparte método (`905_methodology/`) y planos (construcción vs operación) casi idénticos a los nuestros.
+- **Cómo aplicar:** Ante cualquier duda de arquitectura del motor (agentes, estado, gate, instalador, evaluación), consultar primero `Caden_Harness/720_build/` y `Caden_Harness/905_methodology/`. Adaptar, no copiar a ciegas: FODA predice **demanda** (datos/ML, capas bronze/silver/gold), Caden fabrica **software** (Vertical Slices/BDD). Ver `D-009`, `D-010`, `D-011`.
 - **Fecha:** 2026-06-27
 
 <!--

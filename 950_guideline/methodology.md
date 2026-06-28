@@ -106,64 +106,71 @@ Toda fase, sin excepción, debe implementar la colaboración de **tres instancia
     *   **Rol**: Director del Proyecto. En la práctica, es la **sesión principal de Claude Code** (nivel 0
         del árbol de subagentes) operada junto al científico de datos.
     *   **Responsabilidad**: Define el contrato de la fase, gestiona las señales de bloqueo y toma la decisión final de "Avanzar o Repetir" (GateKeeper). Es el único que escribe el estado global (`fda-harness-state.json`).
-2.  **Instancia B: Ejecución (`foda-orchestrator`)**
-    *   **Rol**: Capataz Técnico. Es un **subagente** spawneado por A; lleva la herramienta `Agent` en su
-        `tools` para poder spawnear Workers anidados (ver §3.1 y `D-005`).
-    *   **Responsabilidad**: Recibe el contrato, descompone el trabajo en micro-tareas y coordina a los **Workers** especializados (`foda-worker-*`) para producir los artefactos. Escribe el estado técnico (`fda-execution-state.json`).
-    *   **Regla crítica (E12)**: Antes de activar cualquier Worker, la Instancia B debe persistir su plan de orquestación completo en la sección `orchestration_plan` de `fda-execution-state.json`. Si el contexto crece durante la ejecución y el agente pierde el hilo, puede releer el plan desde el filesystem sin necesidad de reconstruirlo. Un Worker nunca debe ser activado sin que este plan esté guardado.
-3.  **Instancia C: Evaluación (`foda-evaluator`)**
+2.  **Instancia B: Orquestación/Planificación (`foda-<flujo>-orchestrator`)**
+    *   **Rol**: Capataz Técnico **planificador**. Es un **subagente** spawneado por A; **solo planifica**,
+        **no ejecuta ni spawnea** (`tools: Read`; ver modelo plano §3.1 y `D-009`). Es **específico por flujo**
+        (`D-010`): su cadena de workers va embebida en su definición.
+    *   **Responsabilidad**: Recibe la referencia al contrato y a los insumos, descompone el trabajo en
+        micro-tareas y devuelve a A el **`orchestration_plan`** (qué Workers ejecutar, en qué orden y con qué
+        inputs/outputs). **A** ejecuta ese plan invocando a los Workers. B no produce artefactos ni escribe al
+        filesystem (salvo que el modelo plano delegue en A la persistencia del estado técnico).
+    *   **Regla crítica (E12)**: El `orchestration_plan` que B devuelve se persiste en la sección
+        `orchestration_plan` de `fda-execution-state.json` (la escribe **A**, único orquestador). Si el contexto
+        crece durante la ejecución, A puede releer el plan desde el filesystem sin reconstruirlo. Ningún Worker
+        se activa sin que este plan esté guardado.
+3.  **Instancia C: Evaluación (`foda-<flujo>-evaluator`)**
     *   **Rol**: Auditor Independiente. Es un **subagente** spawneado por A; **no** lleva la herramienta
-        `Agent` (no puede spawnear a nadie), lo que garantiza P3.
+        `Agent` (no puede spawnear a nadie), lo que garantiza P3. Es **específico por flujo** (`D-010`): su
+        rúbrica (dimensiones, vetos, anclas) va embebida en su definición.
     *   **Responsabilidad**: Actúa con un cerebro fresco (sin contexto de la ejecución). Lee el contrato y los artefactos finales, aplica una rúbrica objetiva y emite un veredicto de aprobación o rechazo con feedback técnico.
 
 ### Jerarquía de Control y Llamadas entre Instancias
 Las tres instancias no operan como pares; tienen una jerarquía de control estricta que debe respetarse para preservar P1 (Separación de Roles) y P3 (Evaluador Independiente).
 
 ```
-A (Governor)
+A (Governor) ── única instancia que spawnea (modelo plano, D-009)
 │
-├──▶ spawea B (Phase Orchestrator)   ← delegación de ejecución
+├──▶ spawea B (Phase Orchestrator)   ← B PLANIFICA y devuelve el orchestration_plan (no ejecuta)
+│
+├──▶ ejecuta el plan: spawea Workers (1..N, en paralelo si son independientes)
 │         │
-│         └──▶ spawea Workers (1..N, en paralelo si son independientes)
-│                   │
-│                   └──▶ escriben artefactos al filesystem
+│         └──▶ escriben artefactos al filesystem; reportan a A solo la referencia (path)
 │
-└──▶ spawea C (Phase Evaluator)      ← solo después de que B confirma finalización
+└──▶ spawea C (Phase Evaluator)      ← solo después de que los Workers terminan
           │
           └──▶ lee artefactos del filesystem → emite veredicto
 ```
 
-**Reglas que no pueden violarse:**
+**Reglas que no pueden violarse (modelo plano, `D-009`):**
 
-*   **A llama a B para ejecutar, y a C para auditar — nunca al mismo tiempo.** El flujo es secuencial: primero B produce, luego C evalúa. A es el único que decide cuándo avanzar de una etapa a la siguiente.
-*   **A NO llama a Workers directamente.** Hacerlo mezclaría el dominio estratégico de A con la ejecución táctica, contaminando su contexto y violando P1. B existe precisamente para ser el intermediario técnico que descompone y coordina.
-*   **B llama a los Workers — es su responsabilidad exclusiva.** B conoce el contrato técnico y decide cuántos Workers activar, en qué orden y con qué especialización. Antes de activar cualquier Worker, persiste el `orchestration_plan` (ver regla crítica E12 arriba).
-*   **C no llama a nadie.** C solo lee artefactos del filesystem. Si C contactara a B o a Workers para "aclarar" algo, perdería la independencia que garantiza P3. Toda la información que C necesita debe estar en los artefactos y en el Sprint Contract.
+*   **A es la única instancia que spawnea.** B, Workers y C **no se invocan entre sí**: todo pasa por A. Esto hace el motor robusto a la versión de Claude Code (no depende de subagentes anidados).
+*   **B planifica, no ejecuta.** B recibe el contrato + insumos y devuelve a A el `orchestration_plan` (qué Workers, en qué orden, con qué inputs/outputs). No spawnea ni escribe artefactos. A persiste el plan en `fda-execution-state.json` antes de ejecutar (E12).
+*   **A ejecuta el plan llamando a los Workers.** A invoca cada Worker según el `orchestration_plan` de B (en paralelo los independientes). El secuencial es: B planifica → A ejecuta Workers → C audita. A decide cuándo avanzar de una etapa a la siguiente.
+*   **C no llama a nadie.** C solo lee artefactos del filesystem. Si C contactara a A o a Workers para "aclarar" algo, perdería la independencia que garantiza P3. Toda la información que C necesita debe estar en los artefactos y en el Sprint Contract.
 *   **Cada "llamada" es un agente con contexto fresco.** En la práctica con Claude Code, spawear una instancia significa lanzar un nuevo agente (`Agent` tool) con contexto limpio. Esto implementa P4 (Context Resets) y garantiza que ninguna instancia herede sesgos de las anteriores.
 
-### 3.1 Implementación con subagentes anidados de Claude Code (D-005, L-002)
-El patrón A→B→Workers se apoya en los **subagentes anidados** de Claude Code (disponibles desde la
-versión v2.1.172): un subagente puede spawnear sus propios subagentes.
+### 3.1 Implementación con modelo plano de Claude Code (D-009)
+El patrón A/B/C se implementa con un **modelo plano**: la **sesión principal (A) es la única que
+spawnea**. No se usan subagentes anidados (B no spawnea a los Workers). Esto hace el motor **robusto a
+la versión de Claude Code**: no depende de la feature de anidamiento (v2.1.172+) y está validado en el
+harness de referencia Caden (ver `L-006`). Reemplaza el diseño anidado original de `D-005`.
 
-*   **Mapa de profundidad** (la conversación principal es nivel 0):
+*   **Mapa de spawneo** (la conversación principal es nivel 0; todo lo demás cuelga de A, nivel 1):
     ```
-    nivel 0 ── foda-governor (A)  = sesión principal de Claude Code
-                 ├──▶ nivel 1 ── foda-orchestrator (B)
-                 │                  └──▶ nivel 2 ── foda-worker-* (Workers, en paralelo)
-                 └──▶ nivel 1 ── foda-evaluator (C)
+    nivel 0 ── foda-governor (A)  = sesión principal de Claude Code (ÚNICA que spawnea)
+                 ├──▶ nivel 1 ── foda-<flujo>-orchestrator (B)  → devuelve orchestration_plan a A
+                 ├──▶ nivel 1 ── foda-<flujo>-<rol> (Workers)   → A los ejecuta según el plan de B
+                 └──▶ nivel 1 ── foda-<flujo>-evaluator (C)     → audita y emite veredicto
     ```
 *   **Política de `tools` por instancia** (es lo que hace cumplir P1 y P3 a nivel de herramienta):
-    *   **B (`foda-orchestrator`)**: **incluye** `Agent` en `tools` → puede spawnear Workers.
-    *   **C (`foda-evaluator`) y Workers (`foda-worker-*`)**: **omiten** `Agent` (o lo ponen en
-        `disallowedTools`) → no pueden spawnear a nadie. Así C "no llama a nadie" y los Workers no
-        sub-delegan sin control.
-*   **Límite de profundidad (L-002)**: máximo **5 niveles** bajo la sesión principal; es **fijo y no
-    configurable**. Un subagente en profundidad 5 ya no recibe la herramienta `Agent`. El árbol de FODA
-    usa como mucho el nivel 2, así que queda holgado. Si en el futuro un Worker necesitara sostener
-    paralelismo más profundo, usar *agent teams* (contexto propio por worker) en vez de anidar más.
-*   **Nota sobre el allowlist `Agent(tipo)`**: solo aplica cuando un agente corre como hilo principal
-    (`claude --agent`). Dentro de una definición de subagente, la lista de tipos entre paréntesis se
-    **ignora**: basta con incluir u omitir `Agent` para habilitar o impedir el anidamiento.
+    *   **A (Governor)**: es la sesión principal; **única** con capacidad de invocar subagentes (`Agent`).
+    *   **B (`foda-<flujo>-orchestrator`)**: `tools: Read` (solo planifica). **No** incluye `Agent`.
+    *   **C (`foda-<flujo>-evaluator`)**: `tools: Read, Write`. **No** incluye `Agent` (C no llama a nadie).
+    *   **Workers (`foda-<flujo>-<rol>`)**: las herramientas de su dominio + `Write`. **No** incluyen `Agent`.
+*   **Sin límite de profundidad relevante**: el árbol es plano (A → {B | Workers | C}, todos a nivel 1),
+    así que el límite de 5 niveles de `L-002` deja de ser una restricción de diseño. Si en el futuro se
+    necesitara paralelismo más rico, evaluar *agent teams* (contexto propio por worker), nunca reintroducir
+    anidamiento sin revisar `D-009`.
 
 ### Los 4 Elementos Internos de la Fase
 Para que estas instancias operen, deben existir:
@@ -190,8 +197,9 @@ Para evitar condiciones de carrera, cada archivo tiene un único responsable de 
     *   **Responsable**: **Instancia A (Gobernanza)**.
     *   **Propósito**: Fuente de verdad estratégica, fases y aprobaciones.
 *   **Execution State (`fda-execution-state.json`)**:
-    *   **Responsable**: **Instancia B (Ejecución)**.
-    *   **Propósito**: Control de micro-tareas, uso de workers y estado técnico.
+    *   **Responsable**: **Instancia A (Governor)** — en el modelo plano (`D-009`) A es la única que escribe;
+        persiste el `orchestration_plan` que B devuelve y el avance de los Workers que A ejecuta.
+    *   **Propósito**: Control de micro-tareas, uso de workers y estado técnico (táctico, por flujo).
 *   **Progress Log (`project-progress.txt`)**:
     *   **Responsable**: **Orquestador activo** (la instancia que esté ejecutando la tarea en ese momento, ya sea A, B o C).
     *   **Propósito**: Bitácora narrativa de avance.
@@ -201,7 +209,7 @@ Cuando un Worker completa su tarea, **reporta al Orquestador (Instancia B) únic
 
 *   **Por qué**: Pasar contenido completo entre agentes produce el efecto "teléfono descompuesto": cada traspaso degrada la fidelidad de la información, consume tokens innecesariamente y genera cuellos de botella en el orquestador.
 *   **Cómo**: B actualiza `fda-execution-state.json` con la referencia (path/ID) y continúa la coordinación. Cualquier instancia que necesite el contenido lo lee directamente del filesystem usando esa referencia.
-*   **Aplica a toda la cadena**: Workers → B (solo paths), B → A (solo referencias de estado), C → A (solo path a `/eval/verdict.json`). Ningún agente embebe contenido de artefactos en sus mensajes de reporte.
+*   **Aplica a toda la cadena**: Workers → A (solo paths), B → A (solo el `orchestration_plan`), C → A (solo path a `/eval/verdict.json`). Ningún agente embebe contenido de artefactos en sus mensajes de reporte.
 
 ### 4.3 Artefactos de Memoria y Métricas (Responsabilidades de Cierre) (Responsabilidades de Cierre)
 *   **Métricas (`/eval/metrics_summary.json`)**:
@@ -420,18 +428,17 @@ El ciclo de vida de un arnés es una coreografía sincronizada entre las tres in
 
 ---
 
-### 12.2 Ejecución Técnica (Instancia B + Workers)
+### 12.2 Planificación (Instancia B) y Ejecución Técnica (A + Workers)
 
-*   **Entrada**: B recibe la referencia al Sprint Contract en `fda-harness-state.json`. Lee el contrato; no recibe contenido inline de A.
-*   **Memoria**: Consulta `knowledge/decisions_library.md` y `knowledge/lessons_learned.md` para ajustar el enfoque técnico según lecciones y decisiones previas.
-*   **Plan de orquestación**: Antes de activar cualquier Worker, B persiste su plan completo en la sección `orchestration_plan` de `fda-execution-state.json` (regla crítica E12).
-*   **Orquestación de Workers**: B spawea los Workers especializados según la naturaleza de la tarea. Workers independientes se ejecutan en paralelo (E7). Cada Worker:
+*   **Planificación (B)**: A spawnea a B pasándole la referencia al Sprint Contract en `fda-harness-state.json`. B lee el contrato y los insumos (`tools: Read`), consulta `knowledge/decisions_library.md` y `knowledge/lessons_learned.md` para ajustar el enfoque, y **devuelve a A el `orchestration_plan`** (qué Workers, en qué orden, con qué inputs/outputs). B no ejecuta ni escribe.
+*   **Persistencia del plan (A)**: A escribe el `orchestration_plan` devuelto por B en `fda-execution-state.json` (regla crítica E12). Ningún Worker se activa sin el plan guardado.
+*   **Ejecución de Workers (A)**: A spawnea los Workers especializados según el plan. Workers independientes se ejecutan en paralelo (E7). Cada Worker:
     1. Recibe su micro-tarea con objetivo, formato de salida y herramientas disponibles.
     2. Ejecuta el ciclo SDD+TDD correspondiente.
     3. Escribe su artefacto directamente al filesystem.
-    4. Reporta a B **únicamente la referencia** al artefacto (path), nunca el contenido completo (E6).
-*   **Estado**: B actualiza `fda-execution-state.json` en cada checkpoint de avance, registrando qué Workers completaron y qué artefactos produjeron.
-*   **Cierre de B**: Al finalizar todos los Workers, B actualiza `fda-execution-state.json` con estado `EXECUTION_COMPLETE` y registra el resumen en `project-progress.txt`. A es notificado a través del estado en el filesystem; no existe canal directo B → A.
+    4. Reporta a A **únicamente la referencia** al artefacto (path), nunca el contenido completo (E6).
+*   **Estado**: A actualiza `fda-execution-state.json` en cada checkpoint de avance, registrando qué Workers completaron y qué artefactos produjeron.
+*   **Cierre de la ejecución**: Al finalizar todos los Workers, A marca `fda-execution-state.json` con estado `EXECUTION_COMPLETE` y registra el resumen en `project-progress.txt`, listo para spawnear a C.
 
 ---
 
@@ -439,7 +446,7 @@ El ciclo de vida de un arnés es una coreografía sincronizada entre las tres in
 
 **Paso 1 — Gate intermedio (Instancia A):**
 *   A lee `fda-execution-state.json` y verifica que el estado sea `EXECUTION_COMPLETE`.
-*   Si B no ha completado, A espera o investiga el bloqueo antes de continuar.
+*   Si algún Worker no ha completado, A investiga el bloqueo antes de continuar.
 *   Una vez confirmada la completitud, A **spawea la Instancia C** pasándole las referencias al Sprint Contract y a los artefactos producidos (paths). A no pasa contenido inline.
 
 **Paso 2 — Auditoría independiente (Instancia C):**

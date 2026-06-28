@@ -14,6 +14,11 @@
 - [D-006 — Desactivar la ventana de 1M en el proyecto (`CLAUDE_CODE_DISABLE_1M_CONTEXT`)](#d-006--desactivar-la-ventana-de-1m-en-el-proyecto-claude_code_disable_1m_context)
 - [D-007 — Reactivar la ventana de 1M al volver a Opus por defecto](#d-007--reactivar-la-ventana-de-1m-al-volver-a-opus-por-defecto)
 - [D-008 — Anclar el alias `sonnet` a 200K por variable de entorno, conservando Opus 1M](#d-008--anclar-el-alias-sonnet-a-200k-por-variable-de-entorno-conservando-opus-1m)
+- [D-009 — Modelo de ejecución plano: A es la única instancia que spawnea (reemplaza el anidamiento de D-005)](#d-009--modelo-de-ejecución-plano-a-es-la-única-instancia-que-spawnea-reemplaza-el-anidamiento-de-d-005)
+- [D-010 — Orchestrator (B) y Evaluator (C) por flujo, no genéricos](#d-010--orchestrator-b-y-evaluator-c-por-flujo-no-genéricos)
+- [D-011 — Método de construcción flujo por flujo: brief → diseño → plan → build, con gate humano](#d-011--método-de-construcción-flujo-por-flujo-brief--diseño--plan--build-con-gate-humano)
+- [D-012 — Inputs de prueba por workflow: golden client + snapshots cacheados (híbrido), no re-ejecución acumulativa](#d-012--inputs-de-prueba-por-workflow-golden-client--snapshots-cacheados-híbrido-no-re-ejecución-acumulativa)
+- [D-014 — Complejidad del cliente como matriz 2×2 (producto × geografía): generador parametrizado, fixtures escalonados, jerarquías en el contrato de Discovery/Onboarding](#d-014--complejidad-del-cliente-como-matriz-2x2-producto--geografía-generador-parametrizado-fixtures-escalonados-jerarquías-en-el-contrato-de-discoveryonboarding)
 
 ---
 
@@ -52,7 +57,7 @@
 - **Consecuencias:** Refuerza la separación de planos. La regla "single writer" de `methodology.md` se mantiene con los nuevos nombres. El instalador (`install.sh`) deberá generar estos archivos en el esqueleto de la instancia.
 
 ### D-005 — Subagentes anidados y política de `tools` por instancia A/B/C/Workers
-- **Estado:** Aceptada
+- **Estado:** Reemplazada parcialmente por D-009 (se abandona el anidamiento B→Workers; se conserva la política de `tools` que impide a C y a los Workers spawnear)
 - **Fecha:** 2026-06-27
 - **Contexto:** El patrón A→B→Workers de `methodology.md` requiere que un subagente (B) spawnee otros subagentes (Workers). Había que confirmar que Claude Code lo soporta y fijar cómo se controla.
 - **Decisión:** Apoyarse en los **subagentes anidados** (Claude Code v2.1.172+): la sesión principal actúa como Instancia A y spawnea B y C; B spawnea los Workers. Política de herramientas:
@@ -84,6 +89,53 @@
 - **Decisión:** Agregar `"ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-6"` (sin sufijo `[1m]`) al `env` de `.claude/settings.json`. La doc oficial confirma que el `[1m]` se lee **por variable, no global**: cada alias controla su propia ventana. Así el alias `sonnet` queda anclado a 200K y Opus conserva su 1M (vía picker / auto-upgrade, su propia variable). Se mantiene `model: sonnet` (alias) en `foda-progress` y `model: haiku` en `foda-next`.
 - **Alternativas consideradas:** (a) Reintroducir `CLAUDE_CODE_DISABLE_1M_CONTEXT=1` (D-006) — descartada: es global y mataría también el 1M de Opus, que el usuario quiere conservar. (b) Usar el ID con fecha `claude-sonnet-4-6` directo en el frontmatter — insuficiente: como override no anclaba la ventana y heredaba el 1M de la sesión.
 - **Consecuencias:** Requiere reiniciar para tomar efecto. Opus 1M intacto; `foda-progress` corre Sonnet 200K sin créditos. Patrón reutilizable para cualquier comando/agente del motor: el modelo se elige por alias y su ventana se gobierna por la variable `ANTHROPIC_DEFAULT_<MODELO>_MODEL`. Opcional: anclar también `ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-8[1m]` si se quiere el 1M de Opus explícito (no necesario para la sesión principal). Ver `L-004`.
+
+### D-009 — Modelo de ejecución plano: A es la única instancia que spawnea (reemplaza el anidamiento de D-005)
+- **Estado:** Aceptada (reemplaza parcialmente D-005)
+- **Fecha:** 2026-06-27
+- **Contexto:** `D-005`/§3.1 de `methodology.md` apostaban por **subagentes anidados** (B lleva la herramienta `Agent` y spawnea a los Workers), lo que **depende de Claude Code v2.1.172+**. Al estudiar el harness de referencia **Caden** (`C:\Users\USUARIO\Documents\TripleS\Caden_Harness`), comprobamos que eligió deliberadamente un **modelo plano** "robusto a la versión de Claude Code", ya validado en seco en 2 de sus 6 arneses.
+- **Decisión:** Adoptar el **modelo plano**: la **sesión principal (Instancia A / Governor) es la única que spawnea**. Roles:
+  - **A (Governor):** orquesta, persiste estado, gestiona checkpoints y el gate humano; **única que invoca subagentes** (tiene `Agent`).
+  - **B (Orchestrator):** **solo planifica** — lee el contrato + insumos y devuelve el `orchestration_plan` (qué workers, en qué orden, con qué inputs/outputs). **No ejecuta ni spawnea** (`tools: Read`).
+  - **Workers:** producen los entregables (cada uno su artefacto al filesystem). No spawnean.
+  - **C (Evaluator):** audita con la rúbrica del flujo y emite veredicto (`tools: Read, Write`). No spawnea.
+  - B, Workers y C **no se invocan entre sí**: todo pasa por A.
+- **Alternativas consideradas:** Mantener el anidamiento de `D-005` — descartada por acoplar el motor a una versión específica de Claude Code y no estar validada por nosotros; el modelo plano cumple igual `P1` (separación de roles) y `P3` (C independiente) sólo con la política de `tools`.
+- **Consecuencias:** Se conserva de `D-005` la política de herramientas (C y Workers **sin** `Agent`). Se invierte quién ejecuta el plan: ya **no** es B sino A. Hay que adaptar §3, §3.1 y §12.2 de `methodology.md`. El límite de profundidad de `L-002` deja de ser una restricción de diseño (el árbol es plano: A → {B | Workers | C}, todos a nivel 1).
+
+### D-010 — Orchestrator (B) y Evaluator (C) por flujo, no genéricos
+- **Estado:** Aceptada
+- **Fecha:** 2026-06-27
+- **Contexto:** Quedaba abierto si el motor tendría **un** `foda-orchestrator` y **un** `foda-evaluator` genéricos (parametrizados por contrato/rúbrica como datos) o **uno por flujo**. Caden resuelve con **uno por flujo** (`discovery-orchestrator`/`architecture-orchestrator`, `discovery-evaluator`/`architecture-evaluator`).
+- **Decisión:** **B y C son específicos por flujo.** La razón: en la práctica la **cadena de workers va embebida en B** y la **rúbrica (dimensiones, vetos, anclas few-shot) va embebida en C**; no son datos parametrizables limpios sino el "cerebro" del agente. Nomenclatura del motor: `foda-<flujo>-orchestrator`, `foda-<flujo>-evaluator`, y workers `foda-<flujo>-<rol>`.
+- **Alternativas consideradas:** B/C genéricos parametrizados — descartada: más DRY pero más difícil de afinar por dominio y no validada; la rúbrica/cadena cambian tanto entre *Cleaning* y *Modelling* que un prompt genérico se vuelve frágil.
+- **Consecuencias:** Cada carpeta de flujo del motor contiene sus propios `agents/` (B + workers + C). Lo **transversal** (esquema de `fda-harness-state.json`, knowledge, comandos de gate, `CLAUDE.md`) se construye una sola vez. Habilita la construcción **flujo por flujo** (`D-011`).
+
+### D-011 — Método de construcción flujo por flujo: brief → diseño → plan → build, con gate humano
+- **Estado:** Aceptada
+- **Fecha:** 2026-06-27
+- **Contexto:** El motor tiene 14 flujos; construirlos todos a la vez es inviable. Caden construye **arnés por arnés** con un método de 4 pasos secuenciales (`700_brief/` → `705_design/` → `710_plan/` → `720_build/`), aprobando cada paso con el humano, y hoy tiene 2 de 6 arneses construidos.
+- **Decisión:** Adoptar el mismo método: construir **un workflow a la vez** pasando por **brief → diseño → plan → build**, con **gate humano entre pasos**. Cada flujo del motor vive en una **carpeta autocontenida** con la anatomía: `agents/`, `skills/`, `schemas/` (estado por flujo `fda-execution-state` + `project-progress`), `contract/`, `deliverables/` (moldes), `evaluation/` (verdict + metrics + testbank E9). Lo transversal vive en la raíz del plano de construcción.
+- **Alternativas consideradas:** Construir todos los flujos en paralelo o un genérico que sirva a todos — descartadas por `E4` (mínima complejidad) y por riesgo de envenenar aguas abajo sin validación temprana (`E9`).
+- **Consecuencias:** Define la estructura de carpetas del motor (cierra el diseño pendiente de T-002) y el orden de trabajo. Falta decidir **por cuál flujo empezar** (probablemente *Discovery*, primero de la tubería). El instalador (T-003) copiará la carpeta del flujo + lo transversal a la instancia. Detalle de nombres de carpeta y numeración: a definir al diseñar el árbol.
+
+### D-012 — Inputs de prueba por workflow: golden client + snapshots cacheados (híbrido), no re-ejecución acumulativa
+- **Estado:** Aceptada
+- **Fecha:** 2026-06-27
+- **Contexto:** Al construir el motor **flujo por flujo** (`D-011`), la tubería FODA es **acumulativa**: cada workflow consume el handoff y la capa de datos del anterior (*Cleaning*←bronze, *Modelling*←gold, *Inferences*←`best_model.pkl`). Para construir/validar el workflow N se necesita un input que represente la salida de 1..N‑1. La duda: ¿hay que re-ejecutar toda la cadena hasta N cada vez? Caden lo evita con **fixtures fabricados** en el testbank (`020_architecture/.../roadmap-manifest.sample.json`), pero en FODA los artefactos son **pesados** (datasets, modelo entrenado) y fabricarlos a mano es inviable y arriesgado.
+- **Decisión:** Adoptar un **híbrido**: mantener **un cliente de prueba canónico (golden client)** en el plano de construcción; correr la cadena **una vez** y **congelar la salida de cada capa/artefacto como snapshot** (fixture *real*, no fabricado). Para construir el workflow N se **carga el snapshot del upstream** en vez de recomputar. La inmutabilidad **bronze/silver/gold** habilita reusar cada capa congelada tal cual. Un snapshot upstream se **regenera solo si cambia su contrato**.
+- **Alternativas consideradas:** (a) **Fixtures fabricados por workflow** (como Caden) — descartada: para datos/ML un fixture irreal valida contra basura. (b) **Re-ejecución acumulativa** (correr 1..N‑1 cada vez) — descartada por costo en tokens/tiempo (torneo de modelos), justo el problema que motivó la pregunta.
+- **Consecuencias:** Se construye cada workflow **aislado** (sin re-correr la cadena) con fixtures fieles. Costo: **mantener los snapshots** y regenerarlos cuando un contrato upstream cambie (riesgo de fixture stale → registrar versión del contrato junto al snapshot). Implica diseñar en el plano de construcción una zona de **golden client + snapshots por capa/artefacto** (nueva tarea de infraestructura). El testbank E9 de cada workflow apunta a su snapshot upstream en vez de a una muestra inventada. Encaja con la durabilidad/checkpoints de la metodología (§6).
+
+### D-014 — Complejidad del cliente como matriz 2×2 (producto × geografía): generador parametrizado, fixtures escalonados, jerarquías en el contrato de Discovery/Onboarding
+- **Estado:** Aceptada (complementa D-012)
+- **Fecha:** 2026-06-27
+- **Contexto:** Los clientes reales varían en dos dimensiones ortogonales que definen la **granularidad y cardinalidad de series** del forecasting: jerarquía de **producto** (familia→categoría→subcategoría→SKU) y jerarquía de **geografía** (región→país→ciudad→sede). Sus combinaciones dan 4 casos: **C1** mínimo (1 producto, 1 sede) · **C2** (1 producto, geo jerárquica) · **C3** (producto jerárquico, 1 sede) · **C4** mayor (ambas jerárquicas). Cada par `producto × ubicación` es una **serie de tiempo**. Esto activa capacidades reales: escala (1 vs miles de series), **reconciliación jerárquica** (bottom-up/top-down/middle-out), agregación y MAPE por nivel, features jerárquicas, cold-start de series ralas.
+- **Decisión:**
+  1. **Modelado de pruebas:** un **generador sintético parametrizado** por `(profundidad jerarquía producto, profundidad jerarquía geo, nº series, longitud histórica)`. Las 4 esquinas se instancian como **snapshots** del golden client (D-012), de forma **escalonada** (E4/E9): **C1 = golden client primario** (walking skeleton, corre la cadena barato e iterativo); **C4 = fixture de estrés** (se corre poco, en el gate "Done"/E9 amplio: escala + ambas jerarquías + reconciliación); **C2/C3 = diagnóstico bajo demanda** (aíslan un eje cuando un workflow falla). No construir las 4 desde el inicio.
+  2. **Modelado del motor:** las dos jerarquías se **capturan en el contrato de Discovery/Onboarding** (`client_register.yaml`, `map_client_data.json`) como el **grain** del cliente, y se propagan a toda la tubería. No son solo una variable de pruebas: son concepto de primera clase de los contratos del motor.
+- **Alternativas consideradas:** (a) Construir las 4 fixtures fijas ya — descartada por sobre-ingeniería temprana (E4) y costo de mantenimiento. (b) Solo C1 y posponer jerarquías — descartada: arriesga diseñar workflows que no soporten jerarquía/escala real (la mayoría de clientes reales son C3/C4); deuda que aflora tarde. (c) Jerarquías solo en pruebas — descartada por desacoplar las pruebas del diseño real de los contratos.
+- **Consecuencias:** El testbank de cada workflow apunta al **snapshot del caso relevante para él** (Discovery basta con el esquema; Modelling necesita C4). Amplía T-014 (el generador debe parametrizar ambas jerarquías). Impone un requisito de diseño a Discovery/Onboarding (T-013): sus contratos deben representar grain multinivel de producto y geografía. La reconciliación jerárquica se vuelve una capacidad esperada de Modelling/Inferences/Reporting.
 
 ---
 

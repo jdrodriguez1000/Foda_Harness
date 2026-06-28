@@ -28,10 +28,13 @@ científico de datos como revisor/aprobador.
 
 ## Estado actual
 
-**Fase:** Inicialización del motor → definición metodológica.
-**Punto actual:** `950_guideline/methodology.md` adaptado a la estructura FODA (14 flujos = fases del
-harness, planos `foda-/fda-`, capas bronze/silver/gold, subagentes anidados); Normas de Comportamiento
-(NC-1 a NC-6) registradas en `principles.md`.
+**Fase:** Inicialización del motor → definición metodológica (arquitectura cerrada).
+**Punto actual:** Tras estudiar el harness de referencia **Caden**, se cerró la arquitectura de FODA:
+**modelo plano** (A es la única que spawnea, B solo planifica — `D-009`, reemplaza el anidamiento de
+`D-005`), **B y C por flujo** (`D-010`) y **método de construcción flujo por flujo** brief→diseño→plan→build
+(`D-011`). `methodology.md` adaptada en consecuencia (§3, §3.1, §4.1, §4.2, §12.2, §12.3). Lección `L-006`
+(Caden como referencia validada). Pendiente: diseñar el árbol de carpetas (T-002 → `D-012`) y elegir el
+primer flujo a construir (T-013).
 
 ## Hitos completados
 
@@ -51,13 +54,19 @@ harness, planos `foda-/fda-`, capas bronze/silver/gold, subagentes anidados); No
 | 2026-06-27 | Reactivada la ventana de 1M al volver el default a Opus 4.8 (1M incluido): se quitó `CLAUDE_CODE_DISABLE_1M_CONTEXT` de `.claude/settings.json` (`"env": {}`). Decisión `D-007` (reemplaza `D-006`). |
 | 2026-06-27 | Resuelto el conflicto Opus-1M vs Sonnet-200K sin desactivar el 1M global: se ancló el alias `sonnet` a 200K con `ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-6` en `.claude/settings.json`. `foda-progress` usa `model: sonnet` (alias), `foda-next` `model: haiku`. Corregido el frontmatter roto de `foda-progress.md` (`yo ---`→`---`). Decisión `D-008`, lección `L-004`. |
 | 2026-06-27 | Detectado y corregido (de nuevo) el frontmatter roto de `foda-progress.md`: `model: model: sonnet`→`model: sonnet`. Por la línea inválida el comando se ejecutó con Haiku 4.5 en vez de Sonnet 200K. Lección `L-005`. |
+| 2026-06-27 | Estudiado el harness de referencia **Caden** (`Caden_Harness/`) y cerrada la arquitectura de FODA: **modelo plano** (`D-009`, reemplaza el anidamiento de `D-005`), **B/C por flujo** (`D-010`) y **método brief→diseño→plan→build flujo por flujo** (`D-011`). Adaptada `methodology.md` (§3, §3.1, §4.1, §4.2, §12.2, §12.3). Lección `L-006`. Tarea `T-012`. |
+| 2026-06-27 | Resuelto el reto de la tubería acumulativa al construir flujo por flujo: se adopta **golden client + snapshots cacheados** (`D-012`, híbrido) en vez de re-ejecutar la cadena; aprovecha la inmutabilidad bronze/silver/gold. Nueva tarea de infraestructura `T-014`. |
+| 2026-06-27 | Definida la **complejidad del cliente como matriz 2×2** (jerarquía producto × geografía = grain/cardinalidad de series): generador sintético parametrizado, fixtures escalonados (C1 ya, C4 estrés, C2/C3 bajo demanda) y jerarquías capturadas en el contrato de Discovery/Onboarding (`D-014`). Amplía `T-014`; nueva `T-015`. |
 
 ## Próximo paso
 
-**T-002 (reorientada) — Definir la estructura de carpetas del motor FODA.** Con la metodología ya
-alineada (T-011), diseñar las definiciones canónicas `foda-*` (agentes `foda-governor` /
-`foda-orchestrator` / `foda-evaluator` / `foda-worker-*`, esquemas de estado `fda-*`, plantillas de los
-13 flujos), el namespace privado y el esqueleto de instancia que copiará `install.sh` (T-003).
+**T-002 — Diseñar el árbol de carpetas del motor FODA** según `D-011`/`D-010`/`D-009`: carpetas del
+método de construcción (brief → diseño → plan → build), la **carpeta autocontenida por flujo** (`agents/`
+con `foda-<flujo>-orchestrator` + workers + `foda-<flujo>-evaluator`, `skills/`, `schemas/`, `contract/`,
+`deliverables/`, `evaluation/`) y los **transversales** en la raíz (esquema `fda-harness-state`, knowledge,
+comandos de gate, `CLAUDE.md`), más la zona de **golden client + snapshots** (`D-012`, tarea T-014).
+Registrar la estructura como `D-013`. Luego **T-013**: elegir el primer flujo (probablemente *Discovery*) y
+redactar su **brief**. Referencia: `Caden_Harness/720_build/` (`L-006`).
 
 ## Bitácora
 
