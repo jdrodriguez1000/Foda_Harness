@@ -62,6 +62,23 @@
 | 070 | Reporting | `aprobado` (L0→Ln) | `planeado` (L0) | — | — |
 | 075 | Monitoring (incl. Alerting) | `aprobado` (L0→Ln) | `planeado` (L0) | — | — |
 
+### Filas transversales (andamiaje del motor, `D-020`)
+
+> No son workflows: son el **andamiaje genérico** que `methodology.md`/`principles.md` describen como
+> ambición (Ln) y que se construye **por bandas** (E4/NC-2/`D-015`). La columna *Brief* no aplica
+> (no llevan brief de flujo); su escalera se define en T-017. Plano **runtime de instancia** (`fda-*`),
+> distinto de la persistencia de construcción (`800_persistence/`).
+
+| ID | Transversal | Brief | Tracer Bullet (skeleton) | MVP | Final |
+|----|-------------|-------|--------------------------|-----|-------|
+| TR-1 | Estado & persistencia (`fda-*`) | n/a | `planeado` (L0: `project-progress.txt` mínimo + git) | — | — |
+| TR-2 | Patrón A/B/C (roles) | n/a | `planeado` (L0: sesión única, sin C independiente) | — | — |
+| TR-3 | Evaluador + rúbrica (C) | n/a | `vacío` (entra en banda posterior) | — | — |
+| TR-4 | Ejecución durable / checkpoints / context resets | n/a | `vacío` (entra en banda posterior) | — | — |
+
+> **Invariantes desde el Tracer Bullet (no deferibles, `D-020`):** handoff en filesystem (P2),
+> trazabilidad (P8), capas bronze/silver/gold inmutables, gate humano de Modelling, persistencia mínima + git (E1).
+
 ---
 
 ## Notas y puntos abiertos
