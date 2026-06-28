@@ -1,7 +1,7 @@
 # Plantilla — Slice Contract FODA (contrato de banda)
 
-> **Cómo usar esta plantilla.** Copia este archivo a `710_plan/<banda>/000_slice_contract.md`
-> (p. ej. `710_plan/tracer-bullet/000_slice_contract.md`) y rellena cada sección. Borra estas
+> **Cómo usar esta plantilla.** Copia este archivo a `703_definition/<banda>/slice_contract.md`
+> (p. ej. `703_definition/tracer-bullet/slice_contract.md`) y rellena cada sección. Borra estas
 > instrucciones y las notas `> _(guía: …)_` antes de cerrar. La **sesión principal (rol Governor / A)**
 > orquesta su redacción; el contenido lo produce el subagente **escritor**, lo audita un **revisor**
 > independiente y lo **aprueba el humano** (gate P5) — protocolo de "Definir" de `D-021`.
@@ -112,10 +112,10 @@
 
 > _(guía: el slice contract se acompaña de un `bdd.md` que describe el **comportamiento esperado de la
 > banda** en Gherkin (Given-When-Then) de punta a punta sobre C1. Aquí solo se referencia y se resume;
-> el detalle va en `710_plan/<banda>/bdd.md`. El revisor verifica que **scope (este doc) ↔ bdd estén
+> el detalle va en `703_definition/<banda>/bdd.md`. El revisor verifica que **scope (este doc) ↔ bdd estén
 > alineados**: nada de más, nada de menos.)_
 
-- **Companion:** `710_plan/<banda>/bdd.md`.
+- **Companion:** `703_definition/<banda>/bdd.md`.
 - **Resumen del comportamiento end-to-end:** `<1–3 escenarios clave que esta banda debe satisfacer>`.
 
 ## 7. Criterio Done end-to-end de la banda

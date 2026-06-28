@@ -29,7 +29,7 @@ científico de datos como revisor/aprobador.
 ## Estado actual
 
 **Fase:** Fase 1 de `D-015` — **EN CURSO**: definición del Tracer Bullet. El **`slice_contract.md` + `bdd.md`
-del Tracer Bullet están escritos y APROBADOS** (`710_plan/tracer-bullet/`). (Fase 0 cerrada: 14 briefs aprobados.)
+del Tracer Bullet están escritos y APROBADOS** (`703_definition/tracer-bullet/`). (Fase 0 cerrada: 14 briefs aprobados.)
 **Punto actual:** los 14 briefs (`010`–`075`) viven en `700_brief/`, todos en estado **APROBADO**, cada
 uno con su **escalera de capacidades L0→Ln** (`D-016`). El **mapa de procesos oficial**
 `700_brief/000_general_process.md` está **completo (14/14)**: entradas/salidas por workflow + tabla
@@ -41,7 +41,7 @@ Scenarios, Reporting, Monitoring); fijadas las **configs de autoría humana** `m
 "reglas como dato" (`D-019`); resuelto que los **parámetros financieros** de Reporting se **leen de
 bronze** (`D-019`); `075` agrupa **Monitoring + Alerting** y cierra el ciclo. Todos los briefs aprobados.
 **Cerrado en esta sesión:** **T-017 completada** — escritos y **APROBADOS** el `slice_contract.md` + `bdd.md`
-del **Tracer Bullet** en `710_plan/tracer-bullet/`. Definen los **14 flujos en su peldaño L0 alineado a la
+del **Tracer Bullet** en `703_definition/tracer-bullet/`. Definen los **14 flujos en su peldaño L0 alineado a la
 letra de cada brief** (010→075), las transversales **TR-1/TR-2** (TR-3/TR-4 diferidas), el orden de la
 tubería, el **Done end-to-end** (margen bruto por serie + cierre de ciclo) y el **hold-out de Monitoring**.
 Se ejecutó el **protocolo agéntico de "Definir"** (`D-021`): la sesión principal orquestó, se escribieron
@@ -55,7 +55,7 @@ dos niveles (banda → `slice_contract`; celda flujo×banda → diseñar/ejecuta
 de carpetas `705_design/`/`710_plan/`/`720_build/<banda>/<flujo>/` espejo de Caden, y el **protocolo
 agéntico del paso "Definir"** (sesión principal A + escritor + revisor independiente + gate humano).
 Aclarado que las **bandas son madurez del motor, no estado de la instancia**. Creadas y aprobadas las
-dos plantillas del paso "Definir" (`710_plan/foda-slice-contract-template.md` y `…/foda-bdd-template.md`).
+dos plantillas del paso "Definir" (`703_definition/foda-slice-contract-template.md` y `…/foda-bdd-template.md`).
 **Próximo paso:** **T-002** (árbol de carpetas según `D-021`) o **T-014** (golden client C1 + snapshots),
 que la primera celda del Tracer Bullet necesita antes de empezar a construir.
 
@@ -88,7 +88,8 @@ que la primera celda del Tracer Bullet necesita antes de empezar a construir.
 | 2026-06-28 | **Completados los 14 briefs (Fase 0 cerrada)**: redactados `050_modelling`, `055_inferences`, `060_simulation`, `065_scenarios`, `070_reporting`, `075_monitoring`. **Los 14 briefs aprobados** (`010`–`075`). Configs humanas `<flujo>_config.yaml` (`modelling`/`simulation`/`scenarios`) y parámetros financieros de Reporting desde bronze (`D-019`). Mapa de procesos `000_general_process.md` completo (14/14); `roadmap.md` con *Brief* = `aprobado` en las 14 filas. |
 | 2026-06-28 | **Definido el método de construcción por vertical slice** (`D-021`) tras estudiar el método de Caden (`700_brief→705_design→710_plan→720_build` + ciclo A/B/C). **Dos niveles**: banda (`slice_contract`) y celda flujo×banda (diseñar/ejecutar/probar/verificar sobre golden client C1). Estructura de carpetas espejo de Caden con eje banda. **Protocolo agéntico del paso "Definir"** (escritor/revisor independiente/gate humano) como plantilla. Aclarado: **bandas = madurez del motor, no estado de la instancia**; el `slice_contract` = formalización de la columna de la banda en `roadmap.md` (= entregable de `T-017`). |
 | 2026-06-28 | **Creadas y aprobadas las dos plantillas del paso "Definir"** (`D-021`): `710_plan/foda-slice-contract-template.md` (contrato de banda — tabla de peldaño L por los 14 flujos, andamiaje transversal `TR-1..TR-4`, golden client C1, BDD companion, Done end-to-end, gate P5) y `710_plan/foda-bdd-template.md` (BDD end-to-end de banda en Gherkin: escenario central de recorrido completo + hitos críticos atados a invariantes `D-020` + **checklist de trazabilidad scope↔bdd** que usa el revisor). Aprobadas por el usuario. Carril `710_plan/` sembrado. |
-| 2026-06-28 | **T-017 — `slice_contract.md` + `bdd.md` del Tracer Bullet escritos y APROBADOS** (`710_plan/tracer-bullet/`): 14 flujos en L0 alineados a la letra de cada brief + TR-1/TR-2, orden de tubería, Done end-to-end (margen bruto + cierre de ciclo), hold-out de Monitoring. Ejecutado el protocolo agéntico de "Definir" (`D-021`) con **revisor en contexto fresco**: veredicto inicial `REQUIERE SUBSANACIÓN` (filas con "L0" desalineado del L0 del brief) → **subsanado** alineando 010/050/060/065/070/075 a los briefs y documentando el único desvío (cardinalidad C1). Gate P5 cerrado. Lección `L-009`. |
+| 2026-06-28 | **T-017 — `slice_contract.md` + `bdd.md` del Tracer Bullet escritos y APROBADOS**: 14 flujos en L0 alineados a la letra de cada brief + TR-1/TR-2, orden de tubería, Done end-to-end (margen bruto + cierre de ciclo), hold-out de Monitoring. Ejecutado el protocolo agéntico de "Definir" (`D-021`) con **revisor en contexto fresco**: veredicto inicial `REQUIERE SUBSANACIÓN` (filas con "L0" desalineado del L0 del brief) → **subsanado** alineando 010/050/060/065/070/075 a los briefs y documentando el único desvío (cardinalidad C1). Gate P5 cerrado. Lección `L-009`. |
+| 2026-06-28 | **Enmienda de carriles (`D-021` §4):** creado el carril dedicado **`703_definition/`** para el output del paso **Definir** (banda). Movidos `slice_contract.md` + `bdd.md` del Tracer Bullet y las dos plantillas desde `710_plan/` → `703_definition/` (vía `git mv`). Motivo: `710_plan/` debe guardar el output del paso **Planear** (planes por celda); ubicar ahí el `slice_contract` conflactaba Definir con Planear y lo separaba de su hermano el brief. Un carril por paso del ciclo. Lección `L-010`. |
 
 ## Próximo paso
 

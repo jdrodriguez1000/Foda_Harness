@@ -3,7 +3,7 @@
 > **Tipo:** BDD de banda (companion del slice contract — paso "Definir" de `D-021`).
 > **Proyecto:** FODA — plano de **construcción** del motor.
 > **Banda:** `Tracer Bullet` (walking skeleton, `D-017`).
-> **Companion de:** `710_plan/tracer-bullet/slice_contract.md`.
+> **Companion de:** `703_definition/tracer-bullet/slice_contract.md`.
 > **Cliente golden:** `C1` (`D-012`/`D-014`).
 > **Decisiones que lo enmarcan:** `D-015`, `D-020`, `D-021` · **Estado:** `APROBADO` · **Fecha:** `2026-06-28`.
 

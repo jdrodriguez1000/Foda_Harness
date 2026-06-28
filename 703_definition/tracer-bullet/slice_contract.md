@@ -101,7 +101,7 @@ científico de datos puede leer.
 
 ## 6. BDD end-to-end (companion `bdd.md`)
 
-- **Companion:** `710_plan/tracer-bullet/bdd.md`.
+- **Companion:** `703_definition/tracer-bullet/bdd.md`.
 - **Resumen del comportamiento end-to-end:** dada la data cruda de C1, cuando la tubería ejecuta los 14
   flujos en orden (010→075) en su peldaño L0, entonces se produce un `reporting.json` con margen bruto por
   serie y un `monitoring.json` con la desviación vs. el hold-out, respetando la inmutabilidad de capas y

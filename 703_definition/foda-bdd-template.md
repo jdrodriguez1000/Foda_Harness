@@ -1,7 +1,7 @@
 # Plantilla — BDD de banda FODA (companion del slice contract)
 
-> **Cómo usar esta plantilla.** Copia este archivo a `710_plan/<banda>/bdd.md` (junto al
-> `000_slice_contract.md` de la misma banda) y rellena cada sección. Borra estas instrucciones y las
+> **Cómo usar esta plantilla.** Copia este archivo a `703_definition/<banda>/bdd.md` (junto al
+> `slice_contract.md` de la misma banda) y rellena cada sección. Borra estas instrucciones y las
 > notas `> _(guía: …)_` antes de cerrar. Lo produce el subagente **escritor** en el paso "Definir"
 > (`D-021`), emparejado con el slice contract; el **revisor** independiente verifica que **scope
 > (slice contract) ↔ bdd estén alineados**: nada de más, nada de menos.
@@ -27,7 +27,7 @@
 > **Tipo:** BDD de banda (companion del slice contract — paso "Definir" de `D-021`).
 > **Proyecto:** FODA — plano de **construcción** del motor.
 > **Banda:** `<Tracer Bullet | Stabilization N | MVP | Evolution N | Final>` (`D-017`).
-> **Companion de:** `710_plan/<banda>/000_slice_contract.md`.
+> **Companion de:** `703_definition/<banda>/slice_contract.md`.
 > **Cliente golden:** `C1` (`D-012`/`D-014`).
 > **Decisiones que lo enmarcan:** `<D-020, D-021, …>` · **Estado:** `BORRADOR | APROBADO` · **Fecha:** `YYYY-MM-DD`.
 
