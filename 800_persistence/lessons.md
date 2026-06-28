@@ -13,6 +13,7 @@
 - [L-005 — El frontmatter `model:` de `foda-progress` se corrompe a `model: model: sonnet`; verificar tras cada edición](#l-005--el-frontmatter-model-de-foda-progress-se-corrompe-a-model-model-sonnet-verificar-tras-cada-edición)
 - [L-006 — Caden es nuestro harness de referencia validado; reutilizar su patrón antes de reinventar](#l-006--caden-es-nuestro-harness-de-referencia-validado-reutilizar-su-patrón-antes-de-reinventar)
 - [L-007 — Profundidad-primero retrasa el time-to-MVP; preferir walking skeleton cuando el valor para el cliente está al final de la tubería](#l-007--profundidad-primero-retrasa-el-time-to-mvp-preferir-walking-skeleton-cuando-el-valor-para-el-cliente-está-al-final-de-la-tubería)
+- [L-008 — El brief define la escalera completa (vista vertical); el slicing por iteración vive en el roadmap (vista horizontal). No truncar el brief a L0](#l-008--el-brief-define-la-escalera-completa-vista-vertical-el-slicing-por-iteración-vive-en-el-roadmap-vista-horizontal-no-truncar-el-brief-a-l0)
 
 ---
 
@@ -65,6 +66,13 @@
 - **Qué pasó:** Caen fabrica software (cada arnés deja valor visible pronto); FODA es una **tubería de datos/ML** donde el valor que valida el cliente (pronóstico, escenarios, reporte) está en los **flujos finales (10–13)**. Con depth-first, el cliente no ve nada hasta el final. Adoptamos un **híbrido por fases** (`D-015`): brief de los 14 → **walking skeleton** end-to-end sobre C1 (simplificando lo caro) → profundización por valor. La idea ya estaba latente en `D-014` (C1 = "walking skeleton").
 - **Lección:** El método de construcción **debe ajustarse a dónde está el valor en el producto**. Copiar el depth-first de Caden a ciegas (pese a `L-006`) habría tardado meses en algo demostrable. Cuando el valor está al final de la tubería, **ancho-primero (skeleton) gana a profundidad-primero**.
 - **Cómo aplicar:** Al construir cualquier tubería encadenada, preguntar *"¿qué valida el cliente y dónde está en la cadena?"* antes de elegir el orden. Si está al final, hacer primero una rebanada fina end-to-end y profundizar después. Adaptar a Caden, no copiarlo (eco de `L-006`). Ver `D-015`, `D-016`.
+- **Fecha:** 2026-06-28
+
+### L-008 — El brief define la escalera completa (vista vertical); el slicing por iteración vive en el roadmap (vista horizontal). No truncar el brief a L0
+- **Contexto:** Al redactar los briefs (T-019), el usuario preguntó si "definir el brief" significaba escribir **solo lo mínimo de la Iteración 1 (Tracer Bullet)** y luego ir "agregando L1" a los briefs al definir cada iteración siguiente.
+- **Qué pasó:** Se aclaró el modelo de `D-016`: el **brief** es la **vista vertical** = la *ambición completa* del flujo, escrita como la **escalera de capacidades L0→Ln** (no solo L0). El **roadmap** es la **vista horizontal** = qué peldaño de cada flujo entra en cada banda/iteración. L1, L2… **ya están** en el brief desde el inicio; la Iteración 2 no "agrega L1 al brief" sino que en el `roadmap.md` asigna ese peldaño a la banda y se ejecuta el método `D-011` (diseño→plan→build) para él. El brief es estable (se *refina*, no se reescribe por iteración); el roadmap es lo que evoluciona.
+- **Lección:** Brief = *futuro completo del flujo* (esbozado, ligero). Roadmap = *cuándo entra cada peldaño*. Confundirlos lleva a truncar el brief a L0 (perdiendo la visión) o a meter el slicing dentro del brief (perdiendo la vista de tubería).
+- **Cómo aplicar:** Al redactar cada brief, completar siempre la escalera **L0→Ln** (mínimo L0 y L1). El recorte por iteración se hace **solo** en `roadmap.md`. No reescribir briefs al planear una nueva banda: refinar el peldaño si hace falta y mover el control al roadmap. Ver `D-016`, `D-017`.
 - **Fecha:** 2026-06-28
 
 <!--

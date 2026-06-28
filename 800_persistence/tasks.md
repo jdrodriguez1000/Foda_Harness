@@ -23,7 +23,10 @@
 
 ## En progreso
 
-_(ninguna)_
+| ID | Estado | Tarea |
+|----|--------|-------|
+| T-019 | `[~]` | **Redactar el brief (ligero) de los 14 flujos** — avance: 8 de 14. `010`–`025` aprobados; `030`–`045` (borrador). Siguiente: `050_modelling`, luego `055`–`075`. |
+| T-020 | `[~]` | **Mantener `700_brief/000_general_process.md` al día** (`D-018`): registrar las entradas/salidas (con nombre canónico en inglés) de cada brief nuevo (`050`–`075`) y conservar la coincidencia de nombres con los briefs. |
 
 ## Pendientes
 
@@ -33,8 +36,6 @@ _(ninguna)_
 
 | ID | Estado | Tarea |
 |----|--------|-------|
-| T-016 | `[ ]` | **Decidir la nomenclatura de iteraciones** del roadmap: bandas estilo Caden (Tracer Bullet → Stabilization → MVP → Evolution → Final) vs. numeración simple (Iteración 1..n). Punto abierto de `D-015`. Bloquea el encabezado definitivo de `roadmap.md`. |
-| T-018 | `[ ]` | **Crear la plantilla de brief FODA** (`D-016`): estructura de Caden (objetivo, alcance qué hace/qué NO, insumos, artefactos, Done, riesgos, siguiente paso) + sección nueva **"Escalera de capacidades"** (tabla L0 mínimo → Ln). |
 | T-019 | `[ ]` | **Redactar el brief (ligero) de los 14 flujos** (Fase 0 de `D-015`), cada uno con su escalera de capacidades. Empezar por *Discovery* (reemplaza el alcance de T-013). Ir poblando la columna *Brief* de `roadmap.md`. |
 | T-017 | `[ ]` | **Definir el alcance mínimo (L0) de la Iteración 1 / walking skeleton** (`D-015` Fase 1): qué peldaño de cada flujo entra en la slice fina end-to-end sobre C1. Poblar la columna *Iter 1* de `roadmap.md`. |
 | T-002 | `[ ]` | Diseñar el árbol de carpetas del motor FODA siguiendo `D-011`: carpetas de método (brief/diseño/plan/build), carpeta autocontenida por flujo (`agents/`, `skills/`, `schemas/`, `contract/`, `deliverables/`, `evaluation/`), zona de **golden client + snapshots** (`D-012`) y transversales en la raíz. Ajustar al flujo por fases de `D-015`. Registrar como `D-013`. |
@@ -56,3 +57,5 @@ _(ninguna)_
 | T-010 | `[x]` | Agregar línea de auto-reporte de modelo en `foda-progress` y `foda-next` para verificar el modelo en ejecución. | 2026-06-27 |
 | T-011 | `[x]` | Adaptar `950_guideline/methodology.md` a la estructura FODA (13 flujos = fases; planos `foda-/fda-`; bronze/silver/gold; subagentes anidados D-005/L-002; renombre `claude-progress.txt`→`project-progress.txt` y estado `fda-*`). | 2026-06-27 |
 | T-012 | `[x]` | Estudiar el harness de referencia **Caden** y decidir arquitectura de FODA: modelo plano (`D-009`), B/C por flujo (`D-010`), método de construcción brief→diseño→plan→build (`D-011`). Adaptada `methodology.md` (§3, §3.1, §4.1, §4.2, §12.2, §12.3); lección `L-006`. | 2026-06-27 |
+| T-016 | `[x]` | Decidir la nomenclatura de iteraciones del roadmap. Resuelta: **bandas estilo Caden** (Tracer Bullet → Stab → MVP → Evol → Final) + flujos numerados **de 5 en 5** (`D-017`). | 2026-06-28 |
+| T-018 | `[x]` | Crear la plantilla de brief FODA (`D-016`): estructura de Caden + sección **"Escalera de capacidades"** (L0→Ln). Creada en `700_brief/foda-brief-template.md`. | 2026-06-28 |
