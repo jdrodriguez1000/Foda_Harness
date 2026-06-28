@@ -41,25 +41,26 @@
 
 > **Nomenclatura — RESUELTA (`D-017`, cierra `T-016`):** columnas = **bandas estilo Caden**
 > (Tracer Bullet → [Stab 1..n] → MVP → [Evol 1..n] → Final). Flujos numerados **de 5 en 5**
-> (`010`…`075`). La fila *Brief* registra si el brief del flujo existe (`vacío`/`planeado`).
+> (`010`…`075`). La fila *Brief* registra el estado del brief del flujo (`vacío`/`planeado`/`aprobado`).
+> **Los 14 briefs están redactados y aprobados** (`010`–`075`).
 > Stabilization/Evolution se agregan como columnas adicionales cuando se definan.
 
 | ID | Workflow | Brief | Tracer Bullet (skeleton) | MVP | Final |
 |----|----------|-------|--------------------------|-----|-------|
-| 010 | Discovery | `planeado` (L0→Ln) | `planeado` (L0) | — | — |
-| 015 | Onboarding | `planeado` (L0→Ln) | `planeado` (L0) | — | — |
-| 020 | Ingestion (bronze) | `planeado` (L0→Ln) | `planeado` (L0) | — | — |
-| 025 | Profiling | `planeado` (L0→Ln) | `planeado` (L0) | — | — |
-| 030 | Cleaning (silver) | `planeado` (L0→Ln) | `planeado` (L0) | — | — |
-| 035 | Derivation (gold) | `planeado` (L0→Ln) | `planeado` (L0) | — | — |
-| 040 | Exploration | `planeado` (L0→Ln) | `planeado` (L0) | — | — |
-| 045 | Featuring | `planeado` (L0→Ln) | `planeado` (L0) | — | — |
-| 050 | Modelling | `vacío` | `vacío` | — | — |
-| 055 | Inferences | `vacío` | `vacío` | — | — |
-| 060 | Simulation (Montecarlo) | `vacío` | `vacío` | — | — |
-| 065 | Scenarios (¿qué pasa si…?) | `vacío` | `vacío` | — | — |
-| 070 | Reporting | `vacío` | `vacío` | — | — |
-| 075 | Monitoring · Alerting | `vacío` | `vacío` | — | — |
+| 010 | Discovery | `aprobado` (L0→Ln) | `planeado` (L0) | — | — |
+| 015 | Onboarding | `aprobado` (L0→Ln) | `planeado` (L0) | — | — |
+| 020 | Ingestion (bronze) | `aprobado` (L0→Ln) | `planeado` (L0) | — | — |
+| 025 | Profiling | `aprobado` (L0→Ln) | `planeado` (L0) | — | — |
+| 030 | Cleaning (silver) | `aprobado` (L0→Ln) | `planeado` (L0) | — | — |
+| 035 | Derivation (gold) | `aprobado` (L0→Ln) | `planeado` (L0) | — | — |
+| 040 | Exploration | `aprobado` (L0→Ln) | `planeado` (L0) | — | — |
+| 045 | Featuring | `aprobado` (L0→Ln) | `planeado` (L0) | — | — |
+| 050 | Modelling | `aprobado` (L0→Ln) | `planeado` (L0) | — | — |
+| 055 | Inferences | `aprobado` (L0→Ln) | `planeado` (L0) | — | — |
+| 060 | Simulation (Montecarlo) | `aprobado` (L0→Ln) | `planeado` (L0) | — | — |
+| 065 | Scenarios (¿qué pasa si…?) | `aprobado` (L0→Ln) | `planeado` (L0) | — | — |
+| 070 | Reporting | `aprobado` (L0→Ln) | `planeado` (L0) | — | — |
+| 075 | Monitoring (incl. Alerting) | `aprobado` (L0→Ln) | `planeado` (L0) | — | — |
 
 ---
 

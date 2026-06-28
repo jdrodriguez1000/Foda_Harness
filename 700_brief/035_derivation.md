@@ -7,7 +7,7 @@
 > **Capa de datos que toca:** `silver` (lectura) → **escribe** `gold` (demanda histórica agregada).
 > **Fuente de verdad:** `990_documents/expected_workflow.md` (§6 Derivation) + `990_documents/expected_solution.md`.
 > **Método de construcción:** `950_guideline/methodology.md` + `950_guideline/principles.md`.
-> **Decisiones que lo enmarcan:** `D-001` (dos planos), `D-012` (snapshots), `D-014` (grain producto × geo), `D-015` (walking skeleton), `D-016` (brief + escalera), `D-017` (bandas + numeración) · **Estado:** `BORRADOR` · **Fecha:** `2026-06-28` · **Aprobado por:** `—`.
+> **Decisiones que lo enmarcan:** `D-001` (dos planos), `D-012` (snapshots), `D-014` (grain producto × geo), `D-015` (walking skeleton), `D-016` (brief + escalera), `D-017` (bandas + numeración) · **Estado:** `APROBADO` · **Fecha:** `2026-06-28` · **Aprobado por:** `usuario`.
 
 ---
 

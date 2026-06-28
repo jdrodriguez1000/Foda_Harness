@@ -28,17 +28,18 @@ científico de datos como revisor/aprobador.
 
 ## Estado actual
 
-**Fase:** Fase 0 de `D-015` — **redacción de los briefs de los 14 flujos** (T-019), en curso.
-**Punto actual:** **8 de 14 briefs redactados** en `700_brief/`: `010_discovery`, `015_onboarding`,
-`020_ingestion`, `025_profiling` (**aprobados**) y `030_cleaning`, `035_derivation`, `040_exploration`,
-`045_featuring` (borrador, avanzando en cadena). Cada brief lleva su **escalera de capacidades L0→Ln**
-(`D-016`); el `roadmap.md` registra el peldaño previsto para la banda **Tracer Bullet** (= L0).
-**Cerrado en esta sesión:** la nomenclatura de iteraciones — **bandas estilo Caden** (Tracer Bullet →
-Stab → MVP → Evol → Final) + flujos numerados **de 5 en 5** (`D-017`, resuelve `T-016`). Creado el
-**documento oficial de procesos** `700_brief/000_general_process.md` con los **nombres canónicos en
-inglés** de todas las entradas/salidas (`D-018`).
-**Pendiente inmediato:** continuar T-019 con `050_modelling` y los flujos `055`–`075`, manteniendo
-`000_general_process.md` al día → luego definir el alcance del Tracer Bullet (T-017).
+**Fase:** Fase 0 de `D-015` — **COMPLETADA**: los **14 briefs están redactados y aprobados**.
+**Punto actual:** los 14 briefs (`010`–`075`) viven en `700_brief/`, todos en estado **APROBADO**, cada
+uno con su **escalera de capacidades L0→Ln** (`D-016`). El **mapa de procesos oficial**
+`700_brief/000_general_process.md` está **completo (14/14)**: entradas/salidas por workflow + tabla
+maestra de artefactos con nombres canónicos en inglés (`D-018`). El `roadmap.md` tiene la columna *Brief*
+en `aprobado (L0→Ln)` para los 14 flujos y la columna *Tracer Bullet* marcada como `planeado (L0)`.
+**Cerrado en esta sesión:** redactados los briefs `050`–`075` (Modelling, Inferences, Simulation,
+Scenarios, Reporting, Monitoring); fijadas las **configs de autoría humana** `modelling_config.yaml`,
+`simulation_config.yaml`, `scenarios_config.yaml` con la convención `<flujo>_config.yaml` y el principio
+"reglas como dato" (`D-019`); resuelto que los **parámetros financieros** de Reporting se **leen de
+bronze** (`D-019`); `075` agrupa **Monitoring + Alerting** y cierra el ciclo. Todos los briefs aprobados.
+**Próximo paso:** **T-017** — definir el alcance del Tracer Bullet (L0 de cada flujo sobre C1).
 
 ## Hitos completados
 
@@ -66,20 +67,18 @@ inglés** de todas las entradas/salidas (`D-018`).
 | 2026-06-28 | **Resuelta la nomenclatura de iteraciones** (`D-017`, cierra `T-016`): **bandas estilo Caden** (Tracer Bullet → [Stab] → MVP → [Evol] → Final) + flujos numerados **de 5 en 5** (`010`…`075`). Reescrito el encabezado de `roadmap.md` a bandas; corregidas las referencias de numeración y "Iteración 1"→"Tracer Bullet" en los briefs y la plantilla. Lección `L-008` (brief = escalera completa; roadmap = slicing). |
 | 2026-06-28 | **Redactados 8 de 14 briefs** (T-019) en `700_brief/`: `010_discovery` (aprobado por el usuario), `015_onboarding`, `020_ingestion`, `025_profiling` (aprobados) y `030_cleaning`, `035_derivation`, `040_exploration`, `045_featuring` (borrador). Cada uno con su escalera L0→Ln; `roadmap.md` poblado hasta la fila Featuring. |
 | 2026-06-28 | **Creado el mapa de procesos oficial** `700_brief/000_general_process.md` (`D-018`): entradas/salidas por workflow (`010`–`045`) + tabla maestra, con **nombres canónicos en inglés** de todos los artefactos. Se fijaron los que faltaban: `data_health.json` (Profiling), `ingestion_report.json` (Ingestion), `problem_statement.md` / `data_structure.md` (Discovery). Movido desde `Template/` y actualizados los briefs `010`/`020`/`025` para coincidir. |
+| 2026-06-28 | **Completados los 14 briefs (Fase 0 cerrada)**: redactados `050_modelling`, `055_inferences`, `060_simulation`, `065_scenarios`, `070_reporting`, `075_monitoring`. **Los 14 briefs aprobados** (`010`–`075`). Configs humanas `<flujo>_config.yaml` (`modelling`/`simulation`/`scenarios`) y parámetros financieros de Reporting desde bronze (`D-019`). Mapa de procesos `000_general_process.md` completo (14/14); `roadmap.md` con *Brief* = `aprobado` en las 14 filas. |
 
 ## Próximo paso
 
-Orden marcado por `D-015`/`D-016`/`D-017` (Fase 0):
+Fase 0 (`D-015`) cerrada: los 14 briefs están aprobados y el mapa de procesos completo. Sigue la Fase 1:
 
-1. **T-019 — Terminar los briefs restantes (`050`–`075`)**: `050_modelling` (torneo de campeones →
-   `best_model.pkl`, gate humano de selección), `055_inferences` (→ `inferences.json`, MAPE por período),
-   `060_simulation`, `065_scenarios`, `070_reporting`, `075_monitoring_alerting`. Cada uno con su escalera
-   L0→Ln, poblando `roadmap.md` y **registrando sus artefactos en `000_general_process.md`** (`T-020`).
-2. **T-017 — Definir el alcance del Tracer Bullet** (L0 de cada flujo sobre C1), poblando la columna
-   *Tracer Bullet* de `roadmap.md`.
-
-Después: **T-002** (árbol de carpetas, ajustado al flujo por fases) y la construcción del Tracer Bullet.
-Referencia de método: `Caden_Harness/720_build/` (`L-006`).
+1. **T-017 — Definir el alcance del Tracer Bullet** (L0 de cada uno de los 14 flujos sobre C1): qué hace
+   exactamente la slice mínima end-to-end. Poblar la columna *Tracer Bullet* de `roadmap.md` con el detalle
+   concreto de cada celda. Insumo: los 14 briefs aprobados (cada uno con su escalera L0→Ln) +
+   `000_general_process.md`.
+2. Después: **T-002** (árbol de carpetas del motor, ajustado al flujo por fases) y la construcción del
+   Tracer Bullet. Referencia de método: `Caden_Harness/720_build/` (`L-006`).
 
 ## Bitácora
 
@@ -91,6 +90,9 @@ Referencia de método: `Caden_Harness/720_build/` (`L-006`).
 - **Sesión de briefs (T-019):** redactados 8 de 14 briefs con la plantilla — `010_discovery` (revisado y **aprobado** por el usuario), `015_onboarding`, `020_ingestion`, `025_profiling` (aprobados en lote), `030_cleaning`, `035_derivation`, `040_exploration`, `045_featuring` (borrador). Se siguió la fuente `expected_workflow.md` flujo por flujo; cada brief cierra con su escalera L0→Ln y se reflejó en `roadmap.md`.
 - **Aclaración de método (L-008):** el usuario preguntó si el brief era solo L0; se aclaró que el **brief = escalera completa (vista vertical)** y el **roadmap = slicing por banda (vista horizontal)**. Confirmó además el cambio a **bandas estilo Caden** → `D-017` (cierra `T-016`): bandas + numeración de flujos **de 5 en 5**. Se reescribió `roadmap.md` y se corrigieron referencias en los briefs.
 - **Mapa de procesos oficial (`D-018`):** a pedido del usuario se elevó la vista de entradas/salidas a documento oficial `700_brief/000_general_process.md` (movido desde `Template/`), con **nombres canónicos en inglés** de todos los artefactos y sin nombres "a definir": se fijaron `data_health.json`, `ingestion_report.json`, `problem_statement.md`, `data_structure.md`. Es la **fuente de verdad de nombres**; los briefs `010`/`020`/`025` se actualizaron para coincidir. Nueva tarea `T-020` (mantenerlo al día con cada brief). Cierre de sesión: `/foda-progress`. Siguiente: `050_modelling`.
+- **Cierre de la Fase 0 — los 14 briefs (T-019/T-020):** en una segunda corrida se redactaron los 6 briefs restantes guiados por el usuario flujo por flujo: `050_modelling` (modelo ingenuo como baseline → torneo → selección humana del `best_model.pkl`), `055_inferences` (pronóstico + **MAPE por período** como contrato hacia Simulation), `060_simulation` (Montecarlo con MAPE + variables de influencia **opcionales/extensibles**), `065_scenarios` ("¿qué pasa si…?" como **deltas** dirigidos), `070_reporting` (márgenes/costo de oportunidad/inventario de seguridad) y `075_monitoring` (Monitoring + Alerting, cierra el ciclo). El usuario aportó la semántica de cada input humano.
+- **Decisión `D-019`:** convención **`<flujo>_config.yaml`** para los inputs de configuración de autoría humana (`modelling_config.yaml`, `simulation_config.yaml`, `scenarios_config.yaml`) con el principio **"reglas como dato"** (variables/catálogos extensibles editando el YAML, no el motor). El usuario precisó dos veces que las variables de `060`/`065` (lead time, TRM, inflación, precio…) son **ejemplos**, no lista cerrada. Resuelto también que los **parámetros financieros** de `070_reporting` se **leen de la capa bronze** (datos del cliente, mapeados en Onboarding), no de un insumo nuevo. `075` se nombró `075_monitoring` (agrupa Alerting).
+- **Aprobación y cierre:** el usuario **aprobó los 14 briefs** (estado `APROBADO`, `Aprobado por: usuario`); `000_general_process.md` quedó completo (14/14) y `roadmap.md` con la columna *Brief* en `aprobado` para los 14 flujos. T-019 y T-020 completadas. **Próxima tarea: `T-017`** (alcance del Tracer Bullet). Cierre con `/foda-progress`.
 
 ### 2026-06-27
 - Lectura de los documentos base: `current_state.md`, `expected_workflow.md`, `expected_solution.md`.
