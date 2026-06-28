@@ -27,12 +27,19 @@ _(ninguna)_
 
 ## Pendientes
 
+> **Orden de trabajo actualizado por `D-015`/`D-016` (enfoque por fases / walking skeleton):**
+> primero la plantilla de brief y los briefs de los 14 flujos (Fase 0), luego definir la Iteración 1
+> (skeleton), y recién entonces el árbol de carpetas y la construcción.
+
 | ID | Estado | Tarea |
 |----|--------|-------|
-| T-002 | `[ ]` | Diseñar el árbol de carpetas del motor FODA siguiendo `D-011`: carpetas de método (brief/diseño/plan/build), carpeta autocontenida por flujo (`agents/`, `skills/`, `schemas/`, `contract/`, `deliverables/`, `evaluation/`), zona de **golden client + snapshots** (`D-012`) y transversales en la raíz. Registrar como `D-013`. |
+| T-016 | `[ ]` | **Decidir la nomenclatura de iteraciones** del roadmap: bandas estilo Caden (Tracer Bullet → Stabilization → MVP → Evolution → Final) vs. numeración simple (Iteración 1..n). Punto abierto de `D-015`. Bloquea el encabezado definitivo de `roadmap.md`. |
+| T-018 | `[ ]` | **Crear la plantilla de brief FODA** (`D-016`): estructura de Caden (objetivo, alcance qué hace/qué NO, insumos, artefactos, Done, riesgos, siguiente paso) + sección nueva **"Escalera de capacidades"** (tabla L0 mínimo → Ln). |
+| T-019 | `[ ]` | **Redactar el brief (ligero) de los 14 flujos** (Fase 0 de `D-015`), cada uno con su escalera de capacidades. Empezar por *Discovery* (reemplaza el alcance de T-013). Ir poblando la columna *Brief* de `roadmap.md`. |
+| T-017 | `[ ]` | **Definir el alcance mínimo (L0) de la Iteración 1 / walking skeleton** (`D-015` Fase 1): qué peldaño de cada flujo entra en la slice fina end-to-end sobre C1. Poblar la columna *Iter 1* de `roadmap.md`. |
+| T-002 | `[ ]` | Diseñar el árbol de carpetas del motor FODA siguiendo `D-011`: carpetas de método (brief/diseño/plan/build), carpeta autocontenida por flujo (`agents/`, `skills/`, `schemas/`, `contract/`, `deliverables/`, `evaluation/`), zona de **golden client + snapshots** (`D-012`) y transversales en la raíz. Ajustar al flujo por fases de `D-015`. Registrar como `D-013`. |
 | T-014 | `[ ]` | Diseñar la infraestructura de **golden client + snapshots por capa/artefacto** (`D-012`): cliente de prueba canónico, congelado de bronze/silver/gold y artefactos, versionado de snapshot ligado al contrato upstream. Incluye el **generador sintético parametrizado** por jerarquía producto/geo y nº de series (`D-014`): instanciar C1 (primario) ya, C4 (estrés) y C2/C3 bajo demanda. |
-| T-015 | `[ ]` | Al diseñar Discovery/Onboarding (T-013): los contratos (`client_register.yaml`, `map_client_data.json`) deben capturar el **grain** multinivel de producto (familia→categoría→subcategoría→SKU) y geografía (región→país→ciudad→sede) y propagarlo a la tubería (`D-014`). |
-| T-013 | `[ ]` | Decidir por cuál flujo empezar la construcción (probablemente *Discovery*) y redactar su **brief** (1.er paso del método `D-011`). |
+| T-015 | `[ ]` | Al redactar el brief de Discovery/Onboarding (T-019): los contratos (`client_register.yaml`, `map_client_data.json`) deben capturar el **grain** multinivel de producto (familia→categoría→subcategoría→SKU) y geografía (región→país→ciudad→sede) y propagarlo a la tubería (`D-014`). |
 | T-003 | `[ ]` | Diseñar el instalador `install.sh` (copia de definiciones del flujo + transversales, init de git, esqueleto de instancia). Inspirarse en `caden-setup` (ver `L-006`). |
 
 ## Completadas

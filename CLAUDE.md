@@ -49,6 +49,7 @@ al inicio: úsalo para ubicar lo que necesitas **sin leer el archivo completo** 
 | `tasks.md` | Tareas con estado `[ ] [~] [x] [!]` e ID `T-XXX` | Al iniciar (`[~]`) y completar (`[x]`) una tarea |
 | `lessons.md` | Lecciones aprendidas (`L-XXX`) | Cuando algo enseñe a hacer/no hacer algo en adelante |
 | `decisions.md` | Decisiones tipo ADR (`D-XXX`) | Al tomar una decisión de diseño/arquitectura |
+| `roadmap.md` | Tablero estratégico: matriz **workflow × iteración** (qué peldaño de cada flujo entra en cada iteración) | Al definir/avanzar una iteración o al redactar un brief (`D-015`, `D-016`) |
 
 **Flujo de trabajo obligatorio para cada cambio significativo:**
 1. **Antes:** revisar el índice de `tasks.md` y `progress.md` para saber dónde estamos.

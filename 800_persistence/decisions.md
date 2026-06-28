@@ -19,6 +19,8 @@
 - [D-011 — Método de construcción flujo por flujo: brief → diseño → plan → build, con gate humano](#d-011--método-de-construcción-flujo-por-flujo-brief--diseño--plan--build-con-gate-humano)
 - [D-012 — Inputs de prueba por workflow: golden client + snapshots cacheados (híbrido), no re-ejecución acumulativa](#d-012--inputs-de-prueba-por-workflow-golden-client--snapshots-cacheados-híbrido-no-re-ejecución-acumulativa)
 - [D-014 — Complejidad del cliente como matriz 2×2 (producto × geografía): generador parametrizado, fixtures escalonados, jerarquías en el contrato de Discovery/Onboarding](#d-014--complejidad-del-cliente-como-matriz-2x2-producto--geografía-generador-parametrizado-fixtures-escalonados-jerarquías-en-el-contrato-de-discoveryonboarding)
+- [D-015 — Enfoque por fases (walking skeleton): brief de los 14 → slice mínima end-to-end → profundización (enmienda D-011)](#d-015--enfoque-por-fases-walking-skeleton-brief-de-los-14--slice-mínima-end-to-end--profundización-enmienda-d-011)
+- [D-016 — Plantilla de brief con "Escalera de capacidades" (L0→Ln) y `roadmap.md` como matriz de control (workflow × iteración)](#d-016--plantilla-de-brief-con-escalera-de-capacidades-l0ln-y-roadmapmd-como-matriz-de-control-workflow--iteración)
 
 ---
 
@@ -136,6 +138,28 @@
   2. **Modelado del motor:** las dos jerarquías se **capturan en el contrato de Discovery/Onboarding** (`client_register.yaml`, `map_client_data.json`) como el **grain** del cliente, y se propagan a toda la tubería. No son solo una variable de pruebas: son concepto de primera clase de los contratos del motor.
 - **Alternativas consideradas:** (a) Construir las 4 fixtures fijas ya — descartada por sobre-ingeniería temprana (E4) y costo de mantenimiento. (b) Solo C1 y posponer jerarquías — descartada: arriesga diseñar workflows que no soporten jerarquía/escala real (la mayoría de clientes reales son C3/C4); deuda que aflora tarde. (c) Jerarquías solo en pruebas — descartada por desacoplar las pruebas del diseño real de los contratos.
 - **Consecuencias:** El testbank de cada workflow apunta al **snapshot del caso relevante para él** (Discovery basta con el esquema; Modelling necesita C4). Amplía T-014 (el generador debe parametrizar ambas jerarquías). Impone un requisito de diseño a Discovery/Onboarding (T-013): sus contratos deben representar grain multinivel de producto y geografía. La reconciliación jerárquica se vuelve una capacidad esperada de Modelling/Inferences/Reporting.
+
+### D-015 — Enfoque por fases (walking skeleton): brief de los 14 → slice mínima end-to-end → profundización (enmienda D-011)
+- **Estado:** Aceptada (enmienda D-011; no lo reemplaza)
+- **Fecha:** 2026-06-28
+- **Contexto:** `D-011` es **profundidad-primero**: construir cada flujo *completo* (brief→diseño→plan→build, con B+workers+C+rúbricas+testbank) antes de pasar al siguiente. Aplicado a los 14 flujos de FODA, el **time-to-MVP es muy largo**: solo hay algo demostrable tras construir todo. Y un cliente **no valida el código de *Cleaning***; valida el **resultado** (pronóstico, escenarios, reporte — flujos 10–13), que con depth-first llega al final. `D-014` ya nombraba a **C1 como "walking skeleton"**: faltaba elevarlo de táctica de pruebas a **método de construcción**.
+- **Decisión:** Adoptar un **híbrido por fases**:
+  - **Fase 0 — Contratos + briefs de los 14 flujos** (barato, alto valor): define la *ambición completa* y el contrato in/out de cada flujo; fuerza la integración y propaga el grain de `D-014`. No construye agentes.
+  - **Fase 1 — Walking skeleton** (rebanada vertical fina): implementación mínima *happy-path* de cada flujo sobre **C1**, encadenada de punta a punta, produciendo un reporte. Se **simplifica deliberadamente lo caro** (*Modelling* = 1 modelo simple, no el torneo; *Simulation* = Montecarlo básico; Discovery/Onboarding casi stub). **Esto es lo que el cliente valida.**
+  - **Fase 2 — Profundización flujo por flujo** (`D-011` tal cual), **priorizando por valor** (Modelling, Inferences, Scenarios, Reporting primero; Discovery/Onboarding delgados más tiempo).
+  - **Control:** matriz **workflow × iteración** en `roadmap.md` (ver `D-016`). Una **iteración = una vertical slice = una columna** que toma un peldaño de la *escalera de capacidades* de cada flujo.
+- **Alternativas consideradas:** (a) Mantener `D-011` puro (depth-first) — descartada por time-to-MVP largo y por dejar la validación con cliente al final. (b) Construir todo en paralelo sin orden — descartada por `E4`/`E9`.
+- **Consecuencias:** `D-011` **no se reemplaza**, se reubica como el **método de la Fase 2** (profundización dentro de una slice). Cambia el próximo paso: **brief de los 14 + definir Slice 1** antes que T-002 a profundidad. El riesgo `E9` (envenenar aguas abajo sin validación) se mitiga: el skeleton se valida **end-to-end contra C1** y los evaluadores (C) llegan en la Fase 2; se acepta validación más ligera en Fase 1 **a cambio de velocidad**, conscientemente. **Punto abierto:** nomenclatura de iteraciones (bandas estilo Caden — Tracer Bullet → Stab → MVP → Evol → Final — vs. numeración simple Slice 1..n) — **pendiente de decidir** (ver T-016).
+
+### D-016 — Plantilla de brief con "Escalera de capacidades" (L0→Ln) y `roadmap.md` como matriz de control (workflow × iteración)
+- **Estado:** Aceptada (complementa D-015)
+- **Fecha:** 2026-06-28
+- **Contexto:** El usuario quiere **no perder el control**: saber siempre qué se implementó de cada workflow, qué falta y cuándo se implementará, además de poder ver el futuro. Mezclar el "mínimo vs. siguiente" en un solo lugar oculta una de las dos vistas necesarias: la **vertical** (por workflow) y la **horizontal** (entre workflows / por iteración).
+- **Decisión:** Separar en **dos artefactos** con responsabilidades distintas:
+  1. **Brief (vista vertical, por workflow):** plantilla = estructura de los briefs de Caden (objetivo, alcance *qué hace* / *qué NO hace*, insumos, artefactos esperados, criterios Done, riesgos, siguiente paso) **+ sección nueva "Escalera de capacidades"**: tabla **L0 (mínimo) → L1 → … → Ln** que ordena la *ambición completa* del flujo por madurez. El brief describe **el futuro** del flujo, no solo el mínimo.
+  2. **`roadmap.md` (vista horizontal, entre workflows):** matriz **workflow × iteración** en `800_persistence/`. Una **iteración = vertical slice = columna** que toma **un peldaño de la escalera de cada flujo**. La matriz se **ensambla** a partir de las escaleras de los briefs. Vocabulario de estado por celda: **`vacío` / `planeado` / `mínimo` / `completo`**.
+- **Alternativas consideradas:** (a) Meter el slicing **dentro** del brief — descartada: mezcla niveles y se pierde la vista de tubería completa. (b) Solo `roadmap.md` sin escalera en el brief — descartada: se pierde la vista del *futuro por workflow*.
+- **Consecuencias:** Se crea una **plantilla de brief FODA** (nueva tarea) y el archivo **`roadmap.md`** (memoria de construcción del motor → vive en `800_persistence/`, no es runtime de cliente). `tasks.md` sigue rastreando tareas granulares de la slice en curso; `roadmap.md` es el tablero estratégico. **Pendiente:** la nomenclatura de las columnas depende de `D-015` (punto abierto, T-016).
 
 ---
 

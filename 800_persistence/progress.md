@@ -28,13 +28,16 @@ científico de datos como revisor/aprobador.
 
 ## Estado actual
 
-**Fase:** Inicialización del motor → definición metodológica (arquitectura cerrada).
-**Punto actual:** Tras estudiar el harness de referencia **Caden**, se cerró la arquitectura de FODA:
-**modelo plano** (A es la única que spawnea, B solo planifica — `D-009`, reemplaza el anidamiento de
-`D-005`), **B y C por flujo** (`D-010`) y **método de construcción flujo por flujo** brief→diseño→plan→build
-(`D-011`). `methodology.md` adaptada en consecuencia (§3, §3.1, §4.1, §4.2, §12.2, §12.3). Lección `L-006`
-(Caden como referencia validada). Pendiente: diseñar el árbol de carpetas (T-002 → `D-012`) y elegir el
-primer flujo a construir (T-013).
+**Fase:** Inicialización del motor → definición metodológica (estrategia de construcción cerrada).
+**Punto actual:** Se **enmendó la estrategia de construcción** ante el riesgo de un time-to-MVP muy largo:
+en vez de construir cada flujo a profundidad uno por uno (`D-011` puro), se adopta un **enfoque por fases /
+walking skeleton** (`D-015`): (0) brief ligero de los 14 flujos, (1) rebanada fina end-to-end sobre C1
+(simplificando lo caro) que el cliente pueda validar, (2) profundización por valor con `D-011` dentro de
+cada slice. El **control** se ejerce con dos vistas (`D-016`): el **brief** de cada flujo lleva una
+**"Escalera de capacidades"** (L0→Ln = su futuro), y el nuevo **`roadmap.md`** es la **matriz workflow ×
+iteración** que ensambla esas escaleras (qué peldaño entra en cada iteración, con estado por celda).
+Lección `L-007`. **Punto abierto (T-016):** nomenclatura de iteraciones (bandas Caden vs. numeración).
+Pendiente: plantilla de brief (T-018) → briefs de los 14 (T-019) → definir Iteración 1 (T-017).
 
 ## Hitos completados
 
@@ -57,18 +60,30 @@ primer flujo a construir (T-013).
 | 2026-06-27 | Estudiado el harness de referencia **Caden** (`Caden_Harness/`) y cerrada la arquitectura de FODA: **modelo plano** (`D-009`, reemplaza el anidamiento de `D-005`), **B/C por flujo** (`D-010`) y **método brief→diseño→plan→build flujo por flujo** (`D-011`). Adaptada `methodology.md` (§3, §3.1, §4.1, §4.2, §12.2, §12.3). Lección `L-006`. Tarea `T-012`. |
 | 2026-06-27 | Resuelto el reto de la tubería acumulativa al construir flujo por flujo: se adopta **golden client + snapshots cacheados** (`D-012`, híbrido) en vez de re-ejecutar la cadena; aprovecha la inmutabilidad bronze/silver/gold. Nueva tarea de infraestructura `T-014`. |
 | 2026-06-27 | Definida la **complejidad del cliente como matriz 2×2** (jerarquía producto × geografía = grain/cardinalidad de series): generador sintético parametrizado, fixtures escalonados (C1 ya, C4 estrés, C2/C3 bajo demanda) y jerarquías capturadas en el contrato de Discovery/Onboarding (`D-014`). Amplía `T-014`; nueva `T-015`. |
+| 2026-06-28 | **Enmendada la estrategia de construcción** para acortar el time-to-MVP: enfoque por fases / **walking skeleton** (`D-015`, enmienda `D-011`) — brief de los 14 → slice fina end-to-end sobre C1 → profundización por valor. **Control en dos vistas** (`D-016`): escalera de capacidades L0→Ln en cada brief + nueva **matriz `roadmap.md`** (workflow × iteración). Lección `L-007`. Nuevas tareas `T-016`/`T-017`/`T-018`/`T-019`; reordenadas las pendientes. Creado `800_persistence/roadmap.md`. |
 
 ## Próximo paso
 
-**T-002 — Diseñar el árbol de carpetas del motor FODA** según `D-011`/`D-010`/`D-009`: carpetas del
-método de construcción (brief → diseño → plan → build), la **carpeta autocontenida por flujo** (`agents/`
-con `foda-<flujo>-orchestrator` + workers + `foda-<flujo>-evaluator`, `skills/`, `schemas/`, `contract/`,
-`deliverables/`, `evaluation/`) y los **transversales** en la raíz (esquema `fda-harness-state`, knowledge,
-comandos de gate, `CLAUDE.md`), más la zona de **golden client + snapshots** (`D-012`, tarea T-014).
-Registrar la estructura como `D-013`. Luego **T-013**: elegir el primer flujo (probablemente *Discovery*) y
-redactar su **brief**. Referencia: `Caden_Harness/720_build/` (`L-006`).
+Orden marcado por `D-015`/`D-016` (Fase 0 primero):
+
+1. **T-018 — Crear la plantilla de brief FODA**: estructura de Caden + sección **"Escalera de capacidades"**
+   (L0→Ln). Referencia directa: los briefs de Caden en `Temporal/010_discovery.md` y `Temporal/020_architecture.md`.
+2. **T-019 — Redactar el brief ligero de los 14 flujos**, empezando por *Discovery*, poblando la columna
+   *Brief* de `roadmap.md` (cada uno con su escalera de capacidades).
+3. **T-017 — Definir el alcance mínimo (L0) de la Iteración 1 / walking skeleton** sobre C1, poblando la
+   columna *Iter 1* de `roadmap.md`.
+4. **T-016 — Decidir la nomenclatura de iteraciones** (bandas Caden vs. numeración) — punto abierto que
+   fija el encabezado definitivo de la matriz.
+
+Después: **T-002** (árbol de carpetas, ajustado al flujo por fases) y la construcción de la Iteración 1.
+Referencia de método: `Caden_Harness/720_build/` y los briefs en `Temporal/` (`L-006`).
 
 ## Bitácora
+
+### 2026-06-28
+- El usuario planteó que construir flujo por flujo a profundidad (`D-011`) tarda demasiado en llegar a un MVP validable por el cliente. Se analizó y se adoptó un **enfoque por fases / walking skeleton** (`D-015`): brief de los 14 → rebanada fina end-to-end sobre C1 → profundización por valor (`D-011` pasa a ser el método de la Fase 2).
+- Para no perder el control, se definió el control en **dos vistas** (`D-016`): la **escalera de capacidades** (L0→Ln) dentro de cada **brief** (vista por workflow / el futuro del flujo) y la **matriz `roadmap.md`** workflow × iteración (vista entre workflows / qué peldaño y cuándo). Vocabulario de estado por celda: `vacío`/`planeado`/`mínimo`/`completo`.
+- Creado `800_persistence/roadmap.md` (esqueleto con los 14 flujos). Registradas `D-015`, `D-016` y `L-007`. Nuevas tareas `T-016`..`T-019`. Quedó como **punto abierto** la nomenclatura de iteraciones (bandas Caden vs. numeración, `T-016`).
 
 ### 2026-06-27
 - Lectura de los documentos base: `current_state.md`, `expected_workflow.md`, `expected_solution.md`.
