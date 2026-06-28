@@ -39,7 +39,12 @@ Scenarios, Reporting, Monitoring); fijadas las **configs de autoría humana** `m
 `simulation_config.yaml`, `scenarios_config.yaml` con la convención `<flujo>_config.yaml` y el principio
 "reglas como dato" (`D-019`); resuelto que los **parámetros financieros** de Reporting se **leen de
 bronze** (`D-019`); `075` agrupa **Monitoring + Alerting** y cierra el ciclo. Todos los briefs aprobados.
-**Próximo paso:** **T-017** — definir el alcance del Tracer Bullet (L0 de cada flujo sobre C1).
+**Cerrado en la última sesión:** definido el **método de construcción por vertical slice** (`D-021`):
+dos niveles (banda → `slice_contract`; celda flujo×banda → diseñar/ejecutar/probar/verificar), estructura
+de carpetas `705_design/`/`710_plan/`/`720_build/<banda>/<flujo>/` espejo de Caden, y el **protocolo
+agéntico del paso "Definir"** (sesión principal A + escritor + revisor independiente + gate humano).
+Aclarado que las **bandas son madurez del motor, no estado de la instancia**.
+**Próximo paso:** **T-017** — escribir el `slice_contract` del Tracer Bullet (L0 de los 14 flujos + `TR-*` sobre C1).
 
 ## Hitos completados
 
@@ -68,17 +73,22 @@ bronze** (`D-019`); `075` agrupa **Monitoring + Alerting** y cierra el ciclo. To
 | 2026-06-28 | **Redactados 8 de 14 briefs** (T-019) en `700_brief/`: `010_discovery` (aprobado por el usuario), `015_onboarding`, `020_ingestion`, `025_profiling` (aprobados) y `030_cleaning`, `035_derivation`, `040_exploration`, `045_featuring` (borrador). Cada uno con su escalera L0→Ln; `roadmap.md` poblado hasta la fila Featuring. |
 | 2026-06-28 | **Creado el mapa de procesos oficial** `700_brief/000_general_process.md` (`D-018`): entradas/salidas por workflow (`010`–`045`) + tabla maestra, con **nombres canónicos en inglés** de todos los artefactos. Se fijaron los que faltaban: `data_health.json` (Profiling), `ingestion_report.json` (Ingestion), `problem_statement.md` / `data_structure.md` (Discovery). Movido desde `Template/` y actualizados los briefs `010`/`020`/`025` para coincidir. |
 | 2026-06-28 | **Completados los 14 briefs (Fase 0 cerrada)**: redactados `050_modelling`, `055_inferences`, `060_simulation`, `065_scenarios`, `070_reporting`, `075_monitoring`. **Los 14 briefs aprobados** (`010`–`075`). Configs humanas `<flujo>_config.yaml` (`modelling`/`simulation`/`scenarios`) y parámetros financieros de Reporting desde bronze (`D-019`). Mapa de procesos `000_general_process.md` completo (14/14); `roadmap.md` con *Brief* = `aprobado` en las 14 filas. |
+| 2026-06-28 | **Definido el método de construcción por vertical slice** (`D-021`) tras estudiar el método de Caden (`700_brief→705_design→710_plan→720_build` + ciclo A/B/C). **Dos niveles**: banda (`slice_contract`) y celda flujo×banda (diseñar/ejecutar/probar/verificar sobre golden client C1). Estructura de carpetas espejo de Caden con eje banda. **Protocolo agéntico del paso "Definir"** (escritor/revisor independiente/gate humano) como plantilla. Aclarado: **bandas = madurez del motor, no estado de la instancia**; el `slice_contract` = formalización de la columna de la banda en `roadmap.md` (= entregable de `T-017`). |
 
 ## Próximo paso
 
-Fase 0 (`D-015`) cerrada: los 14 briefs están aprobados y el mapa de procesos completo. Sigue la Fase 1:
+Fase 0 (`D-015`) cerrada: los 14 briefs aprobados, mapa de procesos completo y **método de construcción
+por vertical slice fijado** (`D-021`). Sigue la Fase 1:
 
-1. **T-017 — Definir el alcance del Tracer Bullet** (L0 de cada uno de los 14 flujos sobre C1): qué hace
-   exactamente la slice mínima end-to-end. Poblar la columna *Tracer Bullet* de `roadmap.md` con el detalle
-   concreto de cada celda. Insumo: los 14 briefs aprobados (cada uno con su escalera L0→Ln) +
-   `000_general_process.md`.
-2. Después: **T-002** (árbol de carpetas del motor, ajustado al flujo por fases) y la construcción del
-   Tracer Bullet. Referencia de método: `Caden_Harness/720_build/` (`L-006`).
+1. **T-017 — Escribir el `slice_contract` del Tracer Bullet** (`D-021` nivel banda): qué peldaño L0 de
+   cada uno de los 14 flujos **y de las transversales `TR-1..TR-4`** entra, el **orden de la tubería** y el
+   **Done end-to-end** (reporte que C1 valida). Es la formalización de la columna *Tracer Bullet* de
+   `roadmap.md`. Insumo: los 14 briefs aprobados + `000_general_process.md`. Respetar invariantes de `D-020`.
+2. **T-002 — Crear el árbol de carpetas** según `D-021`: `705_design/`, `710_plan/` y `720_build/` con la
+   rama `tracer-bullet/` (celdas por flujo), `_transversal/` y `golden_client/`. Referencia: `Caden_Harness/720_build/` (`L-006`).
+3. Después: construir el Tracer Bullet aplicando el ciclo de `D-021` (incl. el protocolo agéntico
+   escritor/revisor/gate del paso "Definir"). Pendiente: detallar Diseñar/Planear/Ejecutar/Probar/Verificar
+   con el mismo nivel del paso "Definir".
 
 ## Bitácora
 
@@ -93,6 +103,8 @@ Fase 0 (`D-015`) cerrada: los 14 briefs están aprobados y el mapa de procesos c
 - **Cierre de la Fase 0 — los 14 briefs (T-019/T-020):** en una segunda corrida se redactaron los 6 briefs restantes guiados por el usuario flujo por flujo: `050_modelling` (modelo ingenuo como baseline → torneo → selección humana del `best_model.pkl`), `055_inferences` (pronóstico + **MAPE por período** como contrato hacia Simulation), `060_simulation` (Montecarlo con MAPE + variables de influencia **opcionales/extensibles**), `065_scenarios` ("¿qué pasa si…?" como **deltas** dirigidos), `070_reporting` (márgenes/costo de oportunidad/inventario de seguridad) y `075_monitoring` (Monitoring + Alerting, cierra el ciclo). El usuario aportó la semántica de cada input humano.
 - **Decisión `D-019`:** convención **`<flujo>_config.yaml`** para los inputs de configuración de autoría humana (`modelling_config.yaml`, `simulation_config.yaml`, `scenarios_config.yaml`) con el principio **"reglas como dato"** (variables/catálogos extensibles editando el YAML, no el motor). El usuario precisó dos veces que las variables de `060`/`065` (lead time, TRM, inflación, precio…) son **ejemplos**, no lista cerrada. Resuelto también que los **parámetros financieros** de `070_reporting` se **leen de la capa bronze** (datos del cliente, mapeados en Onboarding), no de un insumo nuevo. `075` se nombró `075_monitoring` (agrupa Alerting).
 - **Aprobación y cierre:** el usuario **aprobó los 14 briefs** (estado `APROBADO`, `Aprobado por: usuario`); `000_general_process.md` quedó completo (14/14) y `roadmap.md` con la columna *Brief* en `aprobado` para los 14 flujos. T-019 y T-020 completadas. **Próxima tarea: `T-017`** (alcance del Tracer Bullet). Cierre con `/foda-progress`.
+- **Método de construcción por vertical slice (`D-021`):** el usuario pidió revisar el método de Caden (`700_brief→705_design→710_plan→720_build` por arnés + ciclo SDD+TDD con instancias A/B/C) y definir cómo construir cada vertical slice de FODA con los pasos **definir→diseñar→planear→ejecutar→probar→verificar**. Se resolvieron tres puntos en conversación: (1) **granularidad** → el usuario eligió **dos niveles** (banda = `slice_contract`; celda flujo×banda = diseñar/ejecutar/probar/verificar acumulando sobre snapshots `D-012`); (2) **terminología** → el **brief** es el alcance del flujo (escalera L0→Ln, "el menú") y el **`slice_contract`** es el alcance de la banda (qué peldaño entra, "la orden"); el paso "Definir" se materializa en el `slice_contract`; (3) **planos** → todo el ciclo es **construcción del motor**; las **bandas son madurez del motor, no estado de la instancia** (la instancia solo ejecuta el motor vigente).
+- **Protocolo agéntico del paso "Definir":** el usuario propuso un flujo detallado (escritor de `scope.md`+`bdd.md` → revisor de consistencia independiente → gate humano, con loop de subsanación y escalamiento). Se **validó** como el patrón harness de Caden (A=sesión principal/Governor, escritor=Worker, revisor=Evaluador C) y se aportaron **dos correcciones**: (a) un subagente no lanza a su "hermano" — termina y devuelve el control a la sesión principal, que encadena el siguiente (modelo plano `D-009`, ver `L-002`); (b) poner un **tope de iteraciones** (~2, E5) antes de escalar al humano. Todo quedó registrado en **`D-021`** (enmienda/precisa `D-011`).
 - **Andamiaje transversal (`D-020`):** ante la pregunta del usuario sobre cómo se trabajarán los temas de `methodology.md`/`principles.md` (persistencia de estado, A/B/C, evaluador, ejecución durable…), se aclaró que (1) hay **dos persistencias** —construcción (`800_persistence/`, ya operativa) vs. runtime de instancia (`fda-*`, por construir)— y (2) la metodología es la **ambición Ln**; el andamiaje se construye **mínimo en el Tracer Bullet y se afina por bandas** (E4/NC-2/`D-015`). Se fijaron los **invariantes no deferibles** (P2, P8, bronze/silver/gold, gate humano, persistencia mínima+git) y los **diferibles** (A/B/C completo, evaluador calibrado, durabilidad, context resets, CR, knowledge base). Se agregaron **filas transversales `TR-1..TR-4`** a `roadmap.md` con su propia escalera y se amplió `T-017` para que también las defina. Decisión `D-020`.
 
 ### 2026-06-27
