@@ -25,7 +25,7 @@
 
 | ID | Estado | Tarea |
 |----|--------|-------|
-| — | — | _(ninguna en progreso; próxima tarea: **T-017**)_ |
+| — | — | _(ninguna en progreso; próxima tarea: **T-002** — árbol de carpetas, o **T-014** — golden client C1)_ |
 
 ## Pendientes
 
@@ -61,3 +61,4 @@
 | T-019 | `[x]` | **Redactar los 14 briefs** (`010`–`075`) con la plantilla, cada uno con su escalera L0→Ln. **Todos aprobados.** Configs humanas fijadas: `modelling_config.yaml`, `simulation_config.yaml`, `scenarios_config.yaml` (`D-019`). | 2026-06-28 |
 | T-020 | `[x]` | **Mantener `700_brief/000_general_process.md` al día** (`D-018`): registradas las entradas/salidas (nombres canónicos en inglés) de los 14 workflows; mapa de procesos completo (14/14). | 2026-06-28 |
 | T-022 | `[x]` | **Crear las plantillas del paso "Definir"** (`D-021`): `710_plan/foda-slice-contract-template.md` (contrato de banda) y `710_plan/foda-bdd-template.md` (BDD end-to-end + checklist scope↔bdd del revisor). **Aprobadas por el usuario.** | 2026-06-28 |
+| T-017 | `[x]` | **Escribir el `slice_contract` + `bdd.md` del Tracer Bullet** (`D-021` nivel banda; `D-015` Fase 1) en `710_plan/tracer-bullet/`: 14 flujos en L0 (alineados a la letra de cada brief) + transversales TR-1/TR-2, orden de tubería, Done end-to-end, hold-out de Monitoring. Revisado en contexto fresco (veredicto `REQUIERE SUBSANACIÓN` → subsanado alineando L0 slice↔briefs) y **APROBADO** por el usuario (gate P5). | 2026-06-28 |

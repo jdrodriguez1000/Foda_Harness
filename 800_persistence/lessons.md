@@ -14,6 +14,7 @@
 - [L-006 — Caden es nuestro harness de referencia validado; reutilizar su patrón antes de reinventar](#l-006--caden-es-nuestro-harness-de-referencia-validado-reutilizar-su-patrón-antes-de-reinventar)
 - [L-007 — Profundidad-primero retrasa el time-to-MVP; preferir walking skeleton cuando el valor para el cliente está al final de la tubería](#l-007--profundidad-primero-retrasa-el-time-to-mvp-preferir-walking-skeleton-cuando-el-valor-para-el-cliente-está-al-final-de-la-tubería)
 - [L-008 — El brief define la escalera completa (vista vertical); el slicing por iteración vive en el roadmap (vista horizontal). No truncar el brief a L0](#l-008--el-brief-define-la-escalera-completa-vista-vertical-el-slicing-por-iteración-vive-en-el-roadmap-vista-horizontal-no-truncar-el-brief-a-l0)
+- [L-009 — El slice contract SELECCIONA el L0 de la letra del brief; no redefinas "L0" por criterio propio. El revisor en contexto fresco lo detecta](#l-009--el-slice-contract-selecciona-el-l0-de-la-letra-del-brief-no-redefinas-l0-por-criterio-propio-el-revisor-en-contexto-fresco-lo-detecta)
 
 ---
 
@@ -73,6 +74,13 @@
 - **Qué pasó:** Se aclaró el modelo de `D-016`: el **brief** es la **vista vertical** = la *ambición completa* del flujo, escrita como la **escalera de capacidades L0→Ln** (no solo L0). El **roadmap** es la **vista horizontal** = qué peldaño de cada flujo entra en cada banda/iteración. L1, L2… **ya están** en el brief desde el inicio; la Iteración 2 no "agrega L1 al brief" sino que en el `roadmap.md` asigna ese peldaño a la banda y se ejecuta el método `D-011` (diseño→plan→build) para él. El brief es estable (se *refina*, no se reescribe por iteración); el roadmap es lo que evoluciona.
 - **Lección:** Brief = *futuro completo del flujo* (esbozado, ligero). Roadmap = *cuándo entra cada peldaño*. Confundirlos lleva a truncar el brief a L0 (perdiendo la visión) o a meter el slicing dentro del brief (perdiendo la vista de tubería).
 - **Cómo aplicar:** Al redactar cada brief, completar siempre la escalera **L0→Ln** (mínimo L0 y L1). El recorte por iteración se hace **solo** en `roadmap.md`. No reescribir briefs al planear una nueva banda: refinar el peldaño si hace falta y mover el control al roadmap. Ver `D-016`, `D-017`.
+- **Fecha:** 2026-06-28
+
+### L-009 — El slice contract SELECCIONA el L0 de la letra del brief; no redefinas "L0" por criterio propio. El revisor en contexto fresco lo detecta
+- **Contexto:** Al escribir el primer `slice_contract` del Tracer Bullet (T-017), redacté la §2 ("selección de peldaños por flujo") diseñando el L0 de cada flujo *desde cero* con mi propio criterio de "rebanada más delgada", en vez de transcribir el L0 ya escrito en cada brief aprobado.
+- **Qué pasó:** El **revisor en contexto fresco** (protocolo "Definir" de `D-021`) emitió `REQUIERE SUBSANACIÓN`: varias filas etiquetaban "L0" un alcance distinto al L0 del brief — unas **por encima** (Reporting con costo de oportunidad/inventario; Simulation con safety stock; Monitoring con señal de re-ejecución) y otras **por debajo** (Modelling solo ingenuo en vez de ingenuo+1; Scenarios solo base en vez de base+1 delta; Discovery con 5 artefactos en vez de 3). La trazabilidad scope↔bdd y los nombres canónicos estaban bien; el fallo fue **un solo eje**: scope↔brief.
+- **Lección:** El `slice_contract` **no inventa** los peldaños: los **selecciona de la escalera del brief** (corolario operativo de `L-008`). El brief es la fuente de verdad del L0; el contrato elige *qué peldaño de cada flujo entra en la banda*, no *qué es el L0*. Si la banda necesita ampliar/recortar respecto a la letra del brief, hay que **documentarlo explícitamente como desvío** (en §4), no etiquetarlo silenciosamente "L0".
+- **Cómo aplicar:** Al escribir cualquier `slice_contract`, abrir la §9 (escalera) de cada brief y **copiar el texto del peldaño** que entra, sin reinterpretarlo. Todo desvío deliberado (p. ej. correr C1 completo cuando el brief dice "1 serie") va anotado como tal. Y **siempre** pasar el borrador por el revisor en contexto fresco antes del gate humano: detecta justo este tipo de desalineación. Ver `D-021`, `L-008`.
 - **Fecha:** 2026-06-28
 
 <!--

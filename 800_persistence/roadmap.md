@@ -83,8 +83,11 @@
 
 ## Notas y puntos abiertos
 - **T-016 — Nomenclatura de iteraciones:** ✅ resuelta por `D-017` (bandas estilo Caden + flujos de 5 en 5).
-- La matriz se irá poblando a medida que se redacten los **briefs de los 14 flujos** (Fase 0, `D-015`)
-  y se defina el alcance mínimo del **Tracer Bullet** (`T-017`).
+- **T-017 — Alcance del Tracer Bullet:** ✅ resuelto. El `slice_contract.md` + `bdd.md` de la columna
+  *Tracer Bullet* están escritos y **APROBADOS** en `710_plan/tracer-bullet/` (14 flujos en L0 alineados a
+  los briefs + TR-1/TR-2). Las celdas siguen en estado `planeado (L0)` hasta construirse (Fase 1).
+- La matriz se irá poblando a `mínimo`/`completo` a medida que se **construyan** las celdas del Tracer
+  Bullet (`D-021`), tras la infraestructura de golden client C1 (`T-014`).
 - Este archivo es **memoria de construcción del motor** (vive en `800_persistence/`); el roadmap de
   runtime de un cliente concreto (estilo `roadmap-manifest.json` de Caden) pertenece al plano
   **instancia** (`fda-*`), no aquí (ver `D-001`, `D-004`).
