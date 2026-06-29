@@ -28,9 +28,11 @@ científico de datos como revisor/aprobador.
 
 ## Estado actual
 
-**Fase:** Fase 1 de `D-015` — **EN CURSO**: construcción del Tracer Bullet. El **`slice_contract.md` + `bdd.md`
-del Tracer Bullet están escritos y APROBADOS** (`703_definition/tracer-bullet/`) y el **árbol de carpetas de
-construcción ya existe** (`705_design/`/`710_plan/`/`720_build/`, T-002). (Fase 0 cerrada: 14 briefs aprobados.)
+**Fase:** Fase 1 de `D-015` — **EN PAUSA antes de la primera celda**: el `slice_contract.md` + `bdd.md` del
+Tracer Bullet están APROBADOS y el árbol de carpetas existe, pero se detectó un **prerrequisito transversal
+no resuelto**: el **stack tecnológico de la instancia** (`D-022`). Antes de construir cualquier celda hay que
+cerrar **T-023** (lenguaje/ML, motor de datos físico de bronze/silver/gold, forma de la app, patrones).
+(Fase 0 cerrada: 14 briefs aprobados.)
 **Punto actual:** los 14 briefs (`010`–`075`) viven en `700_brief/`, todos en estado **APROBADO**, cada
 uno con su **escalera de capacidades L0→Ln** (`D-016`). El **mapa de procesos oficial**
 `700_brief/000_general_process.md` está **completo (14/14)**: entradas/salidas por workflow + tabla
@@ -62,8 +64,11 @@ carriles `705_design/tracer-bullet/`, `710_plan/tracer-bullet/`, `720_build/trac
 6 subcarpetas (`agents`/`skills`/`schemas`/`contract`/`deliverables`/`evaluation`) para los 14 flujos,
 `720_build/_transversal/{TR-1..TR-4}` y `720_build/golden_client/snapshots/`. README por carril explicando
 su paso del ciclo, convención de nombres y notas. `CLAUDE.md §6` actualizado con la estructura completa.
-**Próximo paso:** **T-014** (golden client C1 + snapshots), prerrequisito de la primera celda (`010_discovery`)
-del Tracer Bullet; o **T-021** (protocolo agéntico de los pasos Diseñar/Planear/Ejecutar/Probar/Verificar).
+**Próximo paso (REPRIORIZADO):** **T-023** — **decidir el stack tecnológico de la instancia** (`D-022`, lección
+`L-011`) **antes de iniciar cualquier vertical slice**. Se detectó que lo definido hasta ahora es la
+arquitectura **agéntica** y el **contrato de datos**, pero **nunca el stack** (lenguaje/ML, motor de datos
+físico de bronze/silver/gold, forma de la app, patrones). T-023 es **bloqueante** y **precede a T-014**
+(el golden client necesita el formato de bronze) y a toda celda del Tracer Bullet.
 
 ## Hitos completados
 
@@ -129,6 +134,7 @@ la construcción de la banda (Fase 1 de `D-015`):
 - **Protocolo agéntico del paso "Definir":** el usuario propuso un flujo detallado (escritor de `scope.md`+`bdd.md` → revisor de consistencia independiente → gate humano, con loop de subsanación y escalamiento). Se **validó** como el patrón harness de Caden (A=sesión principal/Governor, escritor=Worker, revisor=Evaluador C) y se aportaron **dos correcciones**: (a) un subagente no lanza a su "hermano" — termina y devuelve el control a la sesión principal, que encadena el siguiente (modelo plano `D-009`, ver `L-002`); (b) poner un **tope de iteraciones** (~2, E5) antes de escalar al humano. Todo quedó registrado en **`D-021`** (enmienda/precisa `D-011`).
 - **Andamiaje transversal (`D-020`):** ante la pregunta del usuario sobre cómo se trabajarán los temas de `methodology.md`/`principles.md` (persistencia de estado, A/B/C, evaluador, ejecución durable…), se aclaró que (1) hay **dos persistencias** —construcción (`800_persistence/`, ya operativa) vs. runtime de instancia (`fda-*`, por construir)— y (2) la metodología es la **ambición Ln**; el andamiaje se construye **mínimo en el Tracer Bullet y se afina por bandas** (E4/NC-2/`D-015`). Se fijaron los **invariantes no deferibles** (P2, P8, bronze/silver/gold, gate humano, persistencia mínima+git) y los **diferibles** (A/B/C completo, evaluador calibrado, durabilidad, context resets, CR, knowledge base). Se agregaron **filas transversales `TR-1..TR-4`** a `roadmap.md` con su propia escalera y se amplió `T-017` para que también las defina. Decisión `D-020`.
 - **T-017 — slice_contract + bdd del Tracer Bullet (escritos, revisados y APROBADOS):** se redactó por pantalla la propuesta del `slice_contract` (14 flujos en L0 + TR-1..TR-4 + orden + Done end-to-end + fixture C1), el usuario la aprobó y se escribieron los documentos definitivos en `710_plan/tracer-bullet/` (`slice_contract.md` + `bdd.md`, usando las plantillas de T-022). A pedido del usuario se renombró `000_slice_contract.md` → `slice_contract.md`. Se lanzó un **revisor independiente en contexto fresco** (`general-purpose`) que auditó scope↔bdd, nombres canónicos, invariantes `D-020`, planos y conformidad con plantillas: veredicto `REQUIERE SUBSANACIÓN` por **un solo eje** (el "L0" de varias filas no coincidía con el L0 de la letra del brief). Se **subsanó** alineando 010 (3 contratos), 050 (ingenuo+1 modelo), 060 (sin safety stock), 065 (1 delta), 070 (solo margen bruto) y 075 (sin señal) a los briefs, y se documentó el **único desvío deliberado** (cardinalidad: C1 completo ~5–10 series). Gate P5 cerrado con la identidad de git (`Triple S`); ambos documentos en `APROBADO`. Lección `L-009` (corolario operativo de `L-008`). T-017 completada.
+- **Hueco detectado — stack tecnológico de la instancia (`D-022`, `L-011`):** el usuario preguntó qué **stack, base de datos, arquitectura y patrones de diseño** usará la instancia. Al verificar contra documentos fuente, briefs y decisiones se confirmó que **nunca se decidió**: lo definido es arquitectura **agéntica** (planos, A/B/C, vertical slice `D-021`) y **contrato de datos** (nombres canónicos `D-018`), pero no la capa de **implementación**. Solo había señales *implícitas* (Python por `best_model.pkl`; exportables `.csv`/`.xlsx`; los "medios de acceso CSV/BD/API" son la **fuente del cliente**, no la BD de la solución). Se decidió (`D-022`) que el stack es **transversal** y debe fijarse como ADRs **antes del primer vertical slice**, no descubrirse celda por celda. Se creó **T-023** (bloqueante, **precede a T-014**) para resolver: (1) lenguaje + librerías de ML, (2) motor de datos físico de bronze/silver/gold, (3) forma de la app (batch CLI vs. servicio), (4) patrones de diseño base. Lección `L-011`. Cierre con `/foda-progress`.
 
 ### 2026-06-27
 - Lectura de los documentos base: `current_state.md`, `expected_workflow.md`, `expected_solution.md`.

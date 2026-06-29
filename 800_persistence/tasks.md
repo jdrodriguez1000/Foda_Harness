@@ -25,7 +25,7 @@
 
 | ID | Estado | Tarea |
 |----|--------|-------|
-| — | — | _(ninguna en progreso; próxima tarea: **T-014** — golden client C1, o **T-021** — protocolo de pasos restantes)_ |
+| — | — | _(ninguna en progreso; **próxima tarea: T-023** — decidir el stack tecnológico de la instancia, BLOQUEA T-014 y todo vertical slice)_ |
 
 ## Pendientes
 
@@ -35,7 +35,7 @@
 
 | ID | Estado | Tarea |
 |----|--------|-------|
-| T-017 | `[ ]` | **(PRÓXIMA) Escribir el `slice_contract` del Tracer Bullet** (`D-021` nivel banda; `D-015` Fase 1): qué peldaño (L0) de cada uno de los 14 flujos **y de las filas transversales `TR-1..TR-4`** (`D-020`) entra, el **orden de la tubería** y el **Done end-to-end** (reporte que C1 valida). Es la formalización de la columna *Tracer Bullet* de `roadmap.md`. Respetar los invariantes no deferibles de `D-020`. Insumo: los 14 briefs aprobados (escalera L0→Ln) + `000_general_process.md` + `methodology.md`/`principles.md` (= ambición Ln). |
+| T-023 | `[ ]` | **(PRÓXIMA — BLOQUEANTE) Decidir el stack tecnológico de la instancia** (`D-022`): resolver como ADRs (`D-023+`), **antes de iniciar cualquier vertical slice**, al menos (1) **lenguaje + librerías de ML**; (2) **motor de datos** de las capas bronze/silver/gold (formato físico + mecanismo de consulta: archivos/Parquet/DuckDB/SQLite/Postgres…); (3) **forma de la app** (batch CLI con gate humano vs. servicio con API); (4) **patrones de diseño base** (cómo un agente invoca código determinista y dónde vive ese código en la instancia). **Precede a T-014** (el golden client necesita el formato de bronze) y a toda celda del Tracer Bullet. Posible conexión con las transversales `TR-*` (`D-020`). Lección `L-011`. |
 | T-014 | `[ ]` | Diseñar la infraestructura de **golden client + snapshots por capa/artefacto** (`D-012`): cliente de prueba canónico, congelado de bronze/silver/gold y artefactos, versionado de snapshot ligado al contrato upstream. Incluye el **generador sintético parametrizado** por jerarquía producto/geo y nº de series (`D-014`): instanciar C1 (primario) ya, C4 (estrés) y C2/C3 bajo demanda. |
 | T-015 | `[ ]` | Al redactar el brief de Discovery/Onboarding (T-019): los contratos (`client_register.yaml`, `map_client_data.json`) deben capturar el **grain** multinivel de producto (familia→categoría→subcategoría→SKU) y geografía (región→país→ciudad→sede) y propagarlo a la tubería (`D-014`). |
 | T-021 | `[ ]` | **Detallar el protocolo agéntico de los pasos restantes del ciclo `D-021`** (Diseñar, Planear, Ejecutar, Probar, Verificar) con el mismo nivel del paso "Definir" (escritor/revisor independiente/gate, encadenamiento por la sesión principal, tope de iteraciones E5). El paso "Definir" ya quedó especificado en `D-021`. |
