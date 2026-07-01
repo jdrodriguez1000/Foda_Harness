@@ -1,6 +1,7 @@
 ---
+name: foda-next
 description: Protocolo de inicio de sesión del motor FODA — lee la persistencia y orienta el siguiente paso
-model: opus
+model: haiku
 ---
 
 # foda-next — Protocolo de inicio de sesión

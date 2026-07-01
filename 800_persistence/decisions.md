@@ -27,6 +27,11 @@
 - [D-020 — La metodología es la ambición (Ln); el andamiaje transversal (estado, A/B/C, evaluador) se construye por bandas con su propia escalera en el roadmap](#d-020--la-metodología-es-la-ambición-ln-el-andamiaje-transversal-estado-abc-evaluador-se-construye-por-bandas-con-su-propia-escalera-en-el-roadmap)
 - [D-021 — Método de construcción por vertical slice en dos niveles (banda/celda) y protocolo agéntico escritor/revisor/gate; las bandas son madurez del motor, no estado de la instancia](#d-021--método-de-construcción-por-vertical-slice-en-dos-niveles-bandacelda-y-protocolo-agéntico-escritorrevisorgate-las-bandas-son-madurez-del-motor-no-estado-de-la-instancia)
 - [D-022 — El stack tecnológico de la instancia (lenguaje/ML, motor de datos bronze/silver/gold, forma de la app, patrones) se decide ANTES de cualquier vertical slice](#d-022--el-stack-tecnológico-de-la-instancia-lenguajeml-motor-de-datos-bronzesilvergold-forma-de-la-app-patrones-se-decide-antes-de-cualquier-vertical-slice)
+- [D-023 — Lenguaje de la instancia: Python con pandas/polars, scikit-learn, numpy, SQLAlchemy/psycopg](#d-023--lenguaje-de-la-instancia-python-con-pandaspolars-scikit-learn-numpy-sqlalchemypsycopg)
+- [D-024 — Motor de datos de bronze/silver/gold: PostgreSQL](#d-024--motor-de-datos-de-bronzesilvergold-postgresql)
+- [D-025 — Forma de la app: batch multi-cliente operado por 1 DS para N clientes, con gate humano. Sin API web en esta fase](#d-025--forma-de-la-app-batch-multi-cliente-operado-por-1-ds-para-n-clientes-con-gate-humano-sin-api-web-en-esta-fase)
+- [D-026 — Patrones de diseño base: monolito modular por capas + hexagonal ligero (puerto/adaptador para acceso a datos)](#d-026--patrones-de-diseño-base-monolito-modular-por-capas--hexagonal-ligero-puertoadaptador-para-acceso-a-datos)
+- [D-027 — Aislamiento multi-tenant en PostgreSQL: esquema por cliente (schema-per-tenant)](#d-027--aislamiento-multi-tenant-en-postgresql-esquema-por-cliente-schema-per-tenant)
 
 ---
 
@@ -227,6 +232,62 @@
 - **Decisión (de proceso):** El stack tecnológico de la instancia es **transversal** y debe fijarse como ADRs **antes de ejecutar la primera celda del Tracer Bullet** — no descubrirse celda por celda (eso produciría implementaciones divergentes, lo contrario a un motor reutilizable). Se antepone una nueva tarea **T-023** que debe resolver, como mínimo: (1) **lenguaje + librerías de ML**; (2) **motor de datos** de las capas bronze/silver/gold (formato físico + mecanismo de consulta); (3) **forma de la app** (batch CLI con gate humano vs. servicio); (4) **patrones de diseño base** (cómo un agente invoca código determinista y dónde vive ese código en la instancia). El resultado se registra como decisiones `D-023+`. Esta T-023 **precede a T-014** (el generador del golden client ya necesita saber en qué formato vive bronze) y a toda celda del Tracer Bullet.
 - **Alternativas consideradas:** (a) **Descubrir el stack al construir la primera celda** (estilo walking-skeleton puro, `D-015`) — descartada: el stack es transversal a los 14 flujos; improvisarlo por celda rompe la reutilización. (b) **Dejarlo implícito** (Python + archivos porque "se sobreentiende") — descartada: el usuario detectó que motor de datos, forma de la app y patrones no son deducibles y deben ser explícitos. (c) **ADRs transversales antes del slice** — elegida.
 - **Consecuencias:** Nueva tarea **T-023** se vuelve la **próxima** del proyecto, por delante de T-014 y T-021. Hasta cerrarla, **no se inicia ningún vertical slice**. Probablemente genere varios ADRs (`D-023+`) y pueda conectarse con las filas transversales `TR-*` (`D-020`). Lección `L-011`.
+
+---
+
+### D-023 — Lenguaje de la instancia: Python con pandas/polars, scikit-learn, numpy, SQLAlchemy/psycopg
+- **Estado:** Aceptada (cierra T-023 punto 1; deriva de `D-022`)
+- **Fecha:** 2026-07-01
+- **Contexto:** T-023 requería decidir el lenguaje + librerías antes del primer vertical slice. Python estaba implícito por `best_model.pkl` (pickle de scikit-learn) pero nunca formalizado.
+- **Decisión:** La instancia se implementa en **Python**. Stack mínimo: `pandas` o `polars` (datos tabulares), `scikit-learn` + librerías de series de tiempo (torneo de Modelling), `numpy` (Montecarlo de Simulation), `SQLAlchemy` + `psycopg` (acceso a PostgreSQL).
+- **Alternativas consideradas:** R — descartado (ecosistema ML más estrecho y el DS opera desde Python). Julia — descartado (madurez de ecosistema y familiaridad del equipo).
+- **Consecuencias:** Todo el código determinista de las `skills/` de cada celda (`D-021 §4`) se escribe en Python. El acceso a Postgres va vía SQLAlchemy (ORM/Core) para mantener el hexagonal ligero de `D-026`.
+
+---
+
+### D-024 — Motor de datos de bronze/silver/gold: PostgreSQL
+- **Estado:** Aceptada (cierra T-023 punto 2; deriva de `D-022`)
+- **Fecha:** 2026-07-01
+- **Contexto:** El motor de datos físico de las capas bronze/silver/gold nunca se había decidido. Candidatos evaluados: archivos Parquet + DuckDB (sin servidor, inmutabilidad natural), SQLite (embebido, mínimo), **PostgreSQL** (servidor, SQL completo, multi-tenant real).
+- **Decisión:** Las capas **bronze/silver/gold** viven como **tablas en PostgreSQL** dentro del schema del cliente (ver `D-027`). bronze es **inmutable** (solo-inserción / versionado; nunca `UPDATE`/`DELETE` sobre lo ingerido). silver/gold son regenerables desde bronze. PostgreSQL habilita Profiling/Exploration con SQL estándar y soporta el aislamiento multi-tenant por schema.
+- **Alternativas consideradas:** Parquet + DuckDB — descartado para esta fase porque el usuario optó por Postgres al confirmarse el requisito de N clientes con un motor relacional único. CSV + SQLite — descartado (escala insuficiente para N clientes). Postgres sigue siendo válido también para volumen por-cliente moderado (planeación de demanda mensual, pocas decenas de SKUs).
+- **Consecuencias:** El generador del golden client (T-014) emite bronze directamente a Postgres en el schema del cliente de prueba. Las migraciones de esquema usan Alembic (o similar) aplicadas por-schema. El acceso desde la lógica ML pasa por el puerto de repositorio (`D-026`).
+
+---
+
+### D-025 — Forma de la app: batch multi-cliente operado por 1 DS para N clientes, con gate humano. Sin API web en esta fase
+- **Estado:** Aceptada (cierra T-023 punto 3; deriva de `D-022`)
+- **Fecha:** 2026-07-01
+- **Contexto:** La tesis SaaSw de FODA es pasar de "1 DS ≤4 clientes" a "1 DS → N clientes", automatizando el 85–95% del trabajo. T-023 debía precisar si esto implica un servicio web/API o un batch CLI multi-tenant.
+- **Decisión:** La instancia es una **app Python batch multi-cliente**: el **DS selecciona el cliente** (tenant) al inicio de una corrida y ejecuta el pipeline de 14 flujos para ese cliente, con **gate humano** en los puntos de decisión clave (selección del `best_model.pkl`, aprobación de artefactos). **Sin API web ni frontend en esta fase** — la multi-clienteidad se logra por **selección de tenant en CLI**, no por concurrencia. El DS puede cambiar de cliente entre corridas.
+- **Alternativas consideradas:** Servicio REST/API — diferido: es la dirección natural del SaaSw final, pero añade complejidad (auth, multi-usuario concurrente, despliegue) antes de validar el pipeline. Aplicación de escritorio — descartado.
+- **Consecuencias:** La **capa de transporte** es CLI/orquestador batch (ver `D-026`). La **notificación** de fin de flujo es revisión de artefactos (polling manual); webhook/email se difiere. La concurrencia de operación ≈ 1 (el DS), eliminando la necesidad de caché externa, colas distribuidas, réplicas de lectura o CDN.
+
+---
+
+### D-026 — Patrones de diseño base: monolito modular por capas + hexagonal ligero (puerto/adaptador para acceso a datos)
+- **Estado:** Aceptada (cierra T-023 punto 4; deriva de `D-022`)
+- **Fecha:** 2026-07-01
+- **Contexto:** El cuestionario de diseño de sistemas (`985_inputs/questionnaire_DS.md`) confirmó: equipo pequeño → monolito; MVP → por capas; requisitos estables en el contorno → hexagonal ligero viable; dominio modular → 14 módulos independientes.
+- **Decisión:** **Monolito modular por capas + hexagonal ligero**: (1) **Transporte** — CLI/orquestador batch (selección de tenant, disparo de flujos, gate humano). (2) **Dominio** — 14 módulos, uno por flujo, con lógica ML determinista + agente del flujo; cada módulo tiene su celda canónica `agents/skills/schemas/contract/deliverables/evaluation` (`D-021 §4`). (3) **Datos** — repositorio/puerto con `tenant` como parámetro transversal; adaptador PostgreSQL (SQLAlchemy/psycopg) implementa el puerto. La **lógica ML no importa** psycopg ni conoce el schema físico; habla solo con la interfaz del repositorio. El **agente orquesta**; el trabajo pesado y reproducible vive en **código determinista** (`skills/`), invocado por el agente.
+- **Alternativas consideradas:** Microservicios — descartados (`D-021` warning; equipo pequeño, sin fricción entre equipos). Hexagonal completo (puertos para todo) — descartado como sobreingeniería para esta fase; "ligero" = solo el borde de datos necesita el puerto para habilitar el cambio a object storage en SaaSw.
+- **Consecuencias:** La puerta a **BD-por-cliente** (si un contrato lo exige) o a **object storage** (fase SaaSw) se deja abierta sin trabajo extra: cambiar el adaptador de conexión en el puerto no toca la lógica ML. Ver también `D-027`.
+
+---
+
+### D-027 — Aislamiento multi-tenant en PostgreSQL: esquema por cliente (schema-per-tenant)
+- **Estado:** Aceptada (complementa D-024/D-025; cierra el punto 5 de T-023)
+- **Fecha:** 2026-07-01
+- **Contexto:** Con PostgreSQL como motor (`D-024`) y N clientes en la misma app (`D-025`), se necesita decidir cómo aislar los datos de cada cliente. Tres opciones evaluadas: (a) esquema por cliente, (b) BD por cliente, (c) `tenant_id` en tablas compartidas.
+- **Decisión:** **Esquema por cliente (schema-per-tenant):** un solo servidor PostgreSQL; un `schema` por cliente (ej. `cliente_abc`) que contiene sus tablas `bronze_*`, `silver_*`, `gold_*`. La app fija el schema activo al inicio de cada corrida (`SET search_path` o calificando el schema). Elegida por el usuario.
+  ```
+  postgres://servidor/foda
+  ├── cliente_abc (schema) → bronze_* / silver_* / gold_*
+  ├── cliente_xyz (schema) → bronze_* / silver_* / gold_*
+  └── ...
+  ```
+- **Alternativas consideradas:** (a) BD por cliente — aislamiento máximo pero N cadenas de conexión y N backups; overhead innecesario para 1 DS con N moderado. Se reserva si un contrato exige separación física. (b) `tenant_id` en tablas compartidas — operación más simple pero riesgo de fuga entre clientes por filtro olvidado; descartado por seguridad de datos.
+- **Consecuencias:** Migraciones se aplican por-schema en un loop (Alembic con `search_path`). La carpeta-por-cliente (`fda-*`, `D-001`) guarda config/artefactos y apunta al schema de su cliente. Reconcilia limpio con `D-001`: los **datos** viven en Postgres; el **runtime** vive en la carpeta del cliente. La puerta a **BD-por-cliente** sigue abierta sin tocar la lógica ML (via el puerto de `D-026`).
 
 ---
 

@@ -28,10 +28,9 @@ científico de datos como revisor/aprobador.
 
 ## Estado actual
 
-**Fase:** Fase 1 de `D-015` — **EN PAUSA antes de la primera celda**: el `slice_contract.md` + `bdd.md` del
-Tracer Bullet están APROBADOS y el árbol de carpetas existe, pero se detectó un **prerrequisito transversal
-no resuelto**: el **stack tecnológico de la instancia** (`D-022`). Antes de construir cualquier celda hay que
-cerrar **T-023** (lenguaje/ML, motor de datos físico de bronze/silver/gold, forma de la app, patrones).
+**Fase:** Fase 1 de `D-015` — **T-023 CERRADA**: el stack tecnológico de la instancia está decidido
+(`D-023..D-027`). La pausa que bloqueaba el Tracer Bullet está levantada. **T-014 desbloqueada** (próxima
+tarea): diseñar la infraestructura del golden client C1 en PostgreSQL.
 (Fase 0 cerrada: 14 briefs aprobados.)
 **Punto actual:** los 14 briefs (`010`–`075`) viven en `700_brief/`, todos en estado **APROBADO**, cada
 uno con su **escalera de capacidades L0→Ln** (`D-016`). El **mapa de procesos oficial**
@@ -102,20 +101,20 @@ físico de bronze/silver/gold, forma de la app, patrones). T-023 es **bloqueante
 | 2026-06-28 | **T-017 — `slice_contract.md` + `bdd.md` del Tracer Bullet escritos y APROBADOS**: 14 flujos en L0 alineados a la letra de cada brief + TR-1/TR-2, orden de tubería, Done end-to-end (margen bruto + cierre de ciclo), hold-out de Monitoring. Ejecutado el protocolo agéntico de "Definir" (`D-021`) con **revisor en contexto fresco**: veredicto inicial `REQUIERE SUBSANACIÓN` (filas con "L0" desalineado del L0 del brief) → **subsanado** alineando 010/050/060/065/070/075 a los briefs y documentando el único desvío (cardinalidad C1). Gate P5 cerrado. Lección `L-009`. |
 | 2026-06-28 | **Enmienda de carriles (`D-021` §4):** creado el carril dedicado **`703_definition/`** para el output del paso **Definir** (banda). Movidos `slice_contract.md` + `bdd.md` del Tracer Bullet y las dos plantillas desde `710_plan/` → `703_definition/` (vía `git mv`). Motivo: `710_plan/` debe guardar el output del paso **Planear** (planes por celda); ubicar ahí el `slice_contract` conflactaba Definir con Planear y lo separaba de su hermano el brief. Un carril por paso del ciclo. Lección `L-010`. |
 | 2026-06-28 | **T-002 — Árbol de carpetas creado (`D-021 §4`):** sembrados los carriles `705_design/tracer-bullet/` y `710_plan/tracer-bullet/` (archivos `<flujo>.md` por celda, a crear al diseñar/planear) y `720_build/tracer-bullet/<flujo>/{agents,skills,schemas,contract,deliverables,evaluation}` para los 14 flujos (010→075). Más `720_build/_transversal/{TR-1..TR-4}` (D-020) y `720_build/golden_client/snapshots/` (D-012/D-014). `README.md` por carril (paso del ciclo, convención, notas) y `.gitkeep` en hojas vacías. `CLAUDE.md §6` actualizado. |
+| 2026-07-01 | **T-023 — Stack tecnológico de la instancia decidido (`D-023..D-027`):** (1) Python + pandas/polars/scikit-learn/numpy/SQLAlchemy (`D-023`); (2) PostgreSQL para bronze/silver/gold (`D-024`); (3) app batch multi-cliente, 1 DS para N clientes, gate humano (`D-025`); (4) monolito modular por capas + hexagonal ligero (`D-026`); (5) schema-per-tenant (`D-027`). Cuestionario de diseño de sistemas completado (`985_inputs/questionnaire_DS.md`). Documento de diseño del sistema creado: `955_architecture/design_system.md`. **T-014 desbloqueada.** |
 
 ## Próximo paso
 
-**T-017 cerrada:** el `slice_contract.md` + `bdd.md` del Tracer Bullet están escritos y APROBADOS. Sigue
-la construcción de la banda (Fase 1 de `D-015`):
+**T-023 cerrada:** stack tecnológico decidido (`D-023..D-027`). Sigue la construcción de la banda
+(Fase 1 de `D-015`):
 
-1. **T-014 — Infraestructura de golden client C1 + snapshots** (`D-012`/`D-014`): generador sintético
-   parametrizado, fixture C1 (1 sede × ~5–10 SKUs, mensual, ~24–36 meses), hold-out de Monitoring (K
-   períodos). Es prerequisito de la primera celda del Tracer Bullet.
-2. **T-002 — Crear el árbol de carpetas** según `D-021`: `705_design/`, `710_plan/` y `720_build/` con la
-   rama `tracer-bullet/` (celdas por flujo), `_transversal/` y `golden_client/`. Referencia: `Caden_Harness/720_build/` (`L-006`).
-3. **T-021 — Detallar el protocolo agéntico de los pasos restantes** del ciclo `D-021` (Diseñar, Planear,
+1. **T-014 — (PRÓXIMA) Infraestructura de golden client C1 + snapshots en PostgreSQL** (`D-012`/`D-014`):
+   generador sintético parametrizado, schema `golden_client` en Postgres con tablas bronze_*/silver_*/gold_*,
+   fixture C1 (1 sede × ~5–10 SKUs, mensual, ~24–36 meses), hold-out de Monitoring (K períodos).
+   Prerequisito de la primera celda del Tracer Bullet.
+2. **T-021 — Detallar el protocolo agéntico de los pasos restantes** del ciclo `D-021` (Diseñar, Planear,
    Ejecutar, Probar, Verificar) con el mismo nivel del paso "Definir".
-4. Después: construir el Tracer Bullet celda por celda (010→075) aplicando el ciclo de `D-021`.
+3. Después: construir el Tracer Bullet celda por celda (010→075) aplicando el ciclo de `D-021`.
 
 ## Bitácora
 
