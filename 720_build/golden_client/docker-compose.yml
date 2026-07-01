@@ -1,0 +1,40 @@
+# docker-compose.yml — Postgres local para el golden client C1 (infra de construcción del MOTOR)
+#
+# Plano: CONSTRUCCIÓN (D-001). Es un Postgres LOCAL y DESECHABLE para construir/probar la tubería
+# contra C1 sin re-ejecutar la cadena (D-012). NO es runtime de instancia; no contiene datos de
+# clientes reales. Motor de datos = PostgreSQL (D-024); aislamiento schema-per-tenant (D-027):
+# el golden client vive en el schema `golden_client` de la base `foda`.
+#
+# Uso (desde 720_build/golden_client/):
+#   docker compose up -d        # levanta el Postgres
+#   docker compose down         # lo apaga (conserva datos)
+#   docker compose down -v      # lo apaga y BORRA el volumen (reset total del fixture)
+#
+# Credenciales y puerto en .env (gitignored). Ver .env.example.
+
+name: foda-golden
+
+services:
+  golden_db:
+    image: postgres:17-alpine
+    container_name: foda_golden_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?define POSTGRES_PASSWORD en .env}
+      POSTGRES_DB: ${POSTGRES_DB:-foda}
+    ports:
+      # Puerto host configurable: 5432 suele estar ocupado por otros contenedores.
+      - "${HOST_PORT:-55432}:5432"
+    volumes:
+      - golden_pgdata:/var/lib/postgresql/data
+      # Los scripts de init corren SOLO en la primera creación del volumen (data dir vacío).
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-foda}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  golden_pgdata:
+    name: foda_golden_pgdata

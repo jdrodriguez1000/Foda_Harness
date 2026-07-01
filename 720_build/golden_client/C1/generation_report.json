@@ -1,0 +1,97 @@
+{
+  "cliente": "C1",
+  "descripcion": "Golden client mínimo (esquina C1 de la matriz 2x2, D-014). Fuente cruda, no bronze.",
+  "semilla": 42,
+  "parametros": {
+    "semilla": 42,
+    "inicio": "2023-01-01",
+    "n_periodos": 36,
+    "hold_out_k": 6,
+    "familia": "Bebidas",
+    "categoria": "Bebidas no alcohólicas",
+    "subcategoria": "Gaseosas",
+    "region": "Andina",
+    "pais": "Colombia",
+    "ciudad": "Bogotá",
+    "sede": "CD Bogotá Norte",
+    "sigma_ruido": 0.1,
+    "estacionalidad": [
+      0.85,
+      0.88,
+      0.95,
+      1.0,
+      1.02,
+      1.0,
+      0.98,
+      1.0,
+      1.05,
+      1.1,
+      1.2,
+      1.45
+    ],
+    "pct_nulos": 0.02,
+    "n_duplicados": 4
+  },
+  "grain": {
+    "producto": [
+      "familia",
+      "categoria",
+      "subcategoria",
+      "sku"
+    ],
+    "geografia": [
+      "region",
+      "pais",
+      "ciudad",
+      "sede"
+    ],
+    "periodicidad": "mensual",
+    "n_series": 7,
+    "series": [
+      "SKU-001",
+      "SKU-002",
+      "SKU-003",
+      "SKU-004",
+      "SKU-005",
+      "SKU-006",
+      "SKU-007"
+    ]
+  },
+  "tiempo": {
+    "primer_periodo": "2023-01-01",
+    "ultimo_periodo": "2025-12-01",
+    "n_periodos_total": 36,
+    "n_periodos_train": 30,
+    "hold_out_k": 6,
+    "primer_periodo_holdout": "2025-07-01"
+  },
+  "hipotesis_incrustada": "La demanda sube en diciembre (factor estacional 1.45) y baja en enero/febrero; verificable aguas abajo en 040_exploration.",
+  "financieros_en_fuente": [
+    "precio_unitario_venta",
+    "costo_unitario_venta",
+    "costo_inventario"
+  ],
+  "ruido_calidad": {
+    "nulos_en_cantidad_demandada": 4,
+    "indices_nulos": [
+      39,
+      65,
+      66,
+      171
+    ],
+    "duplicados_inyectados": 4,
+    "indices_duplicados_origen": [
+      32,
+      34,
+      124,
+      190
+    ],
+    "nota": "Poco a propósito (E4): lo justo para ejercitar 030_cleaning L0. Solo en la historia visible."
+  },
+  "salidas": {
+    "historia": "C1\\source\\demanda_historica.csv",
+    "holdout": "C1\\source\\demanda_holdout.csv",
+    "filas_historia": 214,
+    "filas_holdout": 42
+  }
+}

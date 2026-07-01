@@ -28,10 +28,12 @@ científico de datos como revisor/aprobador.
 
 ## Estado actual
 
-**Fase:** Fase 1 de `D-015` — **T-023 CERRADA**: el stack tecnológico de la instancia está decidido
-(`D-023..D-027`). La pausa que bloqueaba el Tracer Bullet está levantada. **T-014 desbloqueada** (próxima
-tarea): diseñar la infraestructura del golden client C1 en PostgreSQL.
-(Fase 0 cerrada: 14 briefs aprobados.)
+**Fase:** Fase 1 de `D-015` — **T-014 CERRADA**: la infraestructura del **golden client C1** está construida y
+verificada. Postgres 17 corre en **Docker** (`foda_golden_db`, `localhost:55432`, schema `golden_client`, `D-028`);
+el **generador** determinista emite la **fuente cruda** de C1 (7 SKUs × 36 meses, pico de diciembre, ruido de
+calidad, hold-out K=6); los **cuestionarios** pre-respondidos alimentan Discovery L0. **Próxima tarea: T-021**
+(protocolo agéntico de los pasos restantes de `D-021`) y luego la **primera celda `010_discovery`**.
+(Fase 0 cerrada: 14 briefs aprobados. T-023 cerrada: stack decidido `D-023..D-027`.)
 **Punto actual:** los 14 briefs (`010`–`075`) viven en `700_brief/`, todos en estado **APROBADO**, cada
 uno con su **escalera de capacidades L0→Ln** (`D-016`). El **mapa de procesos oficial**
 `700_brief/000_general_process.md` está **completo (14/14)**: entradas/salidas por workflow + tabla
@@ -102,19 +104,18 @@ físico de bronze/silver/gold, forma de la app, patrones). T-023 es **bloqueante
 | 2026-06-28 | **Enmienda de carriles (`D-021` §4):** creado el carril dedicado **`703_definition/`** para el output del paso **Definir** (banda). Movidos `slice_contract.md` + `bdd.md` del Tracer Bullet y las dos plantillas desde `710_plan/` → `703_definition/` (vía `git mv`). Motivo: `710_plan/` debe guardar el output del paso **Planear** (planes por celda); ubicar ahí el `slice_contract` conflactaba Definir con Planear y lo separaba de su hermano el brief. Un carril por paso del ciclo. Lección `L-010`. |
 | 2026-06-28 | **T-002 — Árbol de carpetas creado (`D-021 §4`):** sembrados los carriles `705_design/tracer-bullet/` y `710_plan/tracer-bullet/` (archivos `<flujo>.md` por celda, a crear al diseñar/planear) y `720_build/tracer-bullet/<flujo>/{agents,skills,schemas,contract,deliverables,evaluation}` para los 14 flujos (010→075). Más `720_build/_transversal/{TR-1..TR-4}` (D-020) y `720_build/golden_client/snapshots/` (D-012/D-014). `README.md` por carril (paso del ciclo, convención, notas) y `.gitkeep` en hojas vacías. `CLAUDE.md §6` actualizado. |
 | 2026-07-01 | **T-023 — Stack tecnológico de la instancia decidido (`D-023..D-027`):** (1) Python + pandas/polars/scikit-learn/numpy/SQLAlchemy (`D-023`); (2) PostgreSQL para bronze/silver/gold (`D-024`); (3) app batch multi-cliente, 1 DS para N clientes, gate humano (`D-025`); (4) monolito modular por capas + hexagonal ligero (`D-026`); (5) schema-per-tenant (`D-027`). Cuestionario de diseño de sistemas completado (`985_inputs/questionnaire_DS.md`). Documento de diseño del sistema creado: `955_architecture/design_system.md`. **T-014 desbloqueada.** |
+| 2026-07-01 | **T-014 — Infraestructura de golden client C1 construida y verificada.** Diseño `720_build/golden_client/C1_design.md` (aprobado); frontera decidida: el generador emite **fuente cruda** (CSV), no bronze (nace en la celda `020`). **Postgres 17 en Docker** (`docker-compose.yml`, `foda_golden_db`, `localhost:55432`, DB `foda`, schema `golden_client`; `D-028`, `.env` gitignored). **Generador** `generator/generate_c1.py` determinista (semilla 42): 7 SKUs × 36 meses mensuales, estacionalidad con pico en diciembre (hipótesis testeable), ruido de calidad (nulos+duplicados) y split hold-out K=6. Fuente cruda C1 (`demanda_historica.csv` 214 filas + `demanda_holdout.csv` 42 + `generation_report.json`) y **cuestionarios** pre-respondidos (insumo de `010` L0). Verificado: pico dic. (711→1302), determinismo (hash igual al regenerar), conexión host→contenedor por psycopg. Lección `L-012` (verificar presencia de herramientas). |
 
 ## Próximo paso
 
-**T-023 cerrada:** stack tecnológico decidido (`D-023..D-027`). Sigue la construcción de la banda
-(Fase 1 de `D-015`):
+**T-014 cerrada:** infraestructura del golden client C1 lista (Postgres en Docker + generador + fuente cruda
++ cuestionarios). Sigue la construcción de la banda (Fase 1 de `D-015`):
 
-1. **T-014 — (PRÓXIMA) Infraestructura de golden client C1 + snapshots en PostgreSQL** (`D-012`/`D-014`):
-   generador sintético parametrizado, schema `golden_client` en Postgres con tablas bronze_*/silver_*/gold_*,
-   fixture C1 (1 sede × ~5–10 SKUs, mensual, ~24–36 meses), hold-out de Monitoring (K períodos).
-   Prerequisito de la primera celda del Tracer Bullet.
-2. **T-021 — Detallar el protocolo agéntico de los pasos restantes** del ciclo `D-021` (Diseñar, Planear,
-   Ejecutar, Probar, Verificar) con el mismo nivel del paso "Definir".
-3. Después: construir el Tracer Bullet celda por celda (010→075) aplicando el ciclo de `D-021`.
+1. **T-021 — (PRÓXIMA) Detallar el protocolo agéntico de los pasos restantes** del ciclo `D-021` (Diseñar,
+   Planear, Ejecutar, Probar, Verificar) con el mismo nivel del paso "Definir" ya especificado.
+2. **Primera celda `010_discovery`** del Tracer Bullet: diseñar → ejecutar → probar → verificar contra C1
+   (consume los cuestionarios de C1, emite los 3 contratos). El diseño en `705_design/tracer-bullet/010_discovery.md`.
+3. Después: continuar celda por celda (015→075) aplicando el ciclo de `D-021`, acumulando snapshots (`D-012`).
 
 ## Bitácora
 

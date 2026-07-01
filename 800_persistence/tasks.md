@@ -25,7 +25,7 @@
 
 | ID | Estado | Tarea |
 |----|--------|-------|
-| — | — | _(ninguna en progreso; **próxima tarea: T-014** — infraestructura golden client en PostgreSQL, ya desbloqueada por T-023)_ |
+| — | — | _(ninguna en progreso; **próxima tarea: T-021** — detallar el protocolo agéntico de los pasos restantes del ciclo `D-021`; luego construir la primera celda `010_discovery`)_ |
 
 ## Pendientes
 
@@ -35,7 +35,6 @@
 
 | ID | Estado | Tarea |
 |----|--------|-------|
-| T-014 | `[ ]` | **(PRÓXIMA — desbloqueada por T-023) Diseñar la infraestructura de golden client + snapshots** (`D-012`): cliente de prueba canónico C1 en PostgreSQL (`D-024`/`D-027`), schema `golden_client` con tablas bronze_*/silver_*/gold_*, generador sintético parametrizado por jerarquía producto/geo y nº de series (`D-014`), versionado de snapshot ligado al contrato upstream. C1 primario ya; C4 (estrés) y C2/C3 bajo demanda. |
 | T-015 | `[ ]` | Al redactar el brief de Discovery/Onboarding (T-019): los contratos (`client_register.yaml`, `map_client_data.json`) deben capturar el **grain** multinivel de producto (familia→categoría→subcategoría→SKU) y geografía (región→país→ciudad→sede) y propagarlo a la tubería (`D-014`). |
 | T-021 | `[ ]` | **Detallar el protocolo agéntico de los pasos restantes del ciclo `D-021`** (Diseñar, Planear, Ejecutar, Probar, Verificar) con el mismo nivel del paso "Definir" (escritor/revisor independiente/gate, encadenamiento por la sesión principal, tope de iteraciones E5). El paso "Definir" ya quedó especificado en `D-021`. |
 | T-003 | `[ ]` | Diseñar el instalador `install.sh` (copia de definiciones del flujo + transversales, init de git, esqueleto de instancia). Inspirarse en `caden-setup` (ver `L-006`). |
@@ -62,3 +61,4 @@
 | T-017 | `[x]` | **Escribir el `slice_contract` + `bdd.md` del Tracer Bullet** (`D-021` nivel banda; `D-015` Fase 1) en `703_definition/tracer-bullet/`: 14 flujos en L0 (alineados a la letra de cada brief) + transversales TR-1/TR-2, orden de tubería, Done end-to-end, hold-out de Monitoring. Revisado en contexto fresco (veredicto `REQUIERE SUBSANACIÓN` → subsanado alineando L0 slice↔briefs) y **APROBADO** por el usuario (gate P5). | 2026-06-28 |
 | T-002 | `[x]` | **Crear el árbol de carpetas** del motor FODA (`D-021 §4`): `705_design/tracer-bullet/`, `710_plan/tracer-bullet/`, `720_build/tracer-bullet/<flujo>/{agents,skills,schemas,contract,deliverables,evaluation}` para los 14 flujos, `720_build/_transversal/{TR-1..TR-4}` y `720_build/golden_client/snapshots/`. README por carril. `.gitkeep` en hojas vacías. | 2026-06-28 |
 | T-023 | `[x]` | **Decidir el stack tecnológico de la instancia** (`D-022`): resuelto como `D-023..D-027`. (1) Python + pandas/polars/scikit-learn/numpy/SQLAlchemy (`D-023`); (2) PostgreSQL para bronze/silver/gold (`D-024`); (3) app batch multi-cliente, 1 DS para N clientes, gate humano, sin API web (`D-025`); (4) monolito modular por capas + hexagonal ligero (`D-026`); (5) schema-per-tenant como aislamiento en Postgres (`D-027`). Cuestionario de diseño de sistemas respondido (`985_inputs/questionnaire_DS.md`). Documento de diseño creado: `955_architecture/design_system.md`. T-014 desbloqueada. | 2026-07-01 |
+| T-014 | `[x]` | **Infraestructura de golden client C1 + snapshots** (`D-012`/`D-014`). Diseño aprobado (`720_build/golden_client/C1_design.md`). **Frontera del generador:** produce la **fuente cruda** (CSV), no bronze (nace en la celda `020`). Entregado: **Postgres 17 en Docker** (`docker-compose.yml`, contenedor `foda_golden_db`, `localhost:55432`, schema `golden_client`, `D-028`); **generador** determinista (`generator/generate_c1.py`, semilla 42, 7 SKUs × 36 meses, pico de diciembre, ruido de calidad, hold-out K=6); fuente cruda C1 (`demanda_historica.csv` 214 filas + `demanda_holdout.csv` 42 + `generation_report.json`); **cuestionarios** pre-respondidos (insumo de `010` L0). Verificado: estacionalidad, determinismo (hash igual), conexión host→contenedor. | 2026-07-01 |

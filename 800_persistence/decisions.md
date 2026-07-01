@@ -32,6 +32,7 @@
 - [D-025 — Forma de la app: batch multi-cliente operado por 1 DS para N clientes, con gate humano. Sin API web en esta fase](#d-025--forma-de-la-app-batch-multi-cliente-operado-por-1-ds-para-n-clientes-con-gate-humano-sin-api-web-en-esta-fase)
 - [D-026 — Patrones de diseño base: monolito modular por capas + hexagonal ligero (puerto/adaptador para acceso a datos)](#d-026--patrones-de-diseño-base-monolito-modular-por-capas--hexagonal-ligero-puertoadaptador-para-acceso-a-datos)
 - [D-027 — Aislamiento multi-tenant en PostgreSQL: esquema por cliente (schema-per-tenant)](#d-027--aislamiento-multi-tenant-en-postgresql-esquema-por-cliente-schema-per-tenant)
+- [D-028 — Hosting del Postgres de construcción (golden client) en Docker local, puerto 55432](#d-028--hosting-del-postgres-de-construcción-golden-client-en-docker-local-puerto-55432)
 
 ---
 
@@ -288,6 +289,14 @@
   ```
 - **Alternativas consideradas:** (a) BD por cliente — aislamiento máximo pero N cadenas de conexión y N backups; overhead innecesario para 1 DS con N moderado. Se reserva si un contrato exige separación física. (b) `tenant_id` en tablas compartidas — operación más simple pero riesgo de fuga entre clientes por filtro olvidado; descartado por seguridad de datos.
 - **Consecuencias:** Migraciones se aplican por-schema en un loop (Alembic con `search_path`). La carpeta-por-cliente (`fda-*`, `D-001`) guarda config/artefactos y apunta al schema de su cliente. Reconcilia limpio con `D-001`: los **datos** viven en Postgres; el **runtime** vive en la carpeta del cliente. La puerta a **BD-por-cliente** sigue abierta sin tocar la lógica ML (via el puerto de `D-026`).
+
+### D-028 — Hosting del Postgres de construcción (golden client) en Docker local, puerto 55432
+- **Estado:** Aceptada (refina `D-024`; no lo altera)
+- **Fecha:** 2026-07-01
+- **Contexto:** Al arrancar `T-014` se necesitaba un PostgreSQL corriendo para el golden client C1. No había instalación nativa, pero **sí Docker Desktop operativo** (engine 29.5.3, WSL2). Se evaluó instalar Postgres nativo (winget) vs. contenedor.
+- **Decisión:** Hospedar el Postgres de **construcción** en un **contenedor Docker local** (`docker-compose.yml` en `720_build/golden_client/`): imagen `postgres:17-alpine`, contenedor `foda_golden_db`, base `foda`, **puerto host `55432`** (el 5432 estaba ocupado por otros contenedores del usuario), credenciales en `.env` **gitignored**, schema `golden_client` creado por script de init. Es infra **desechable y reproducible** (`docker compose down -v` = reset del fixture), que casa con el golden client como fixture reseteable (`D-012`).
+- **Alternativas consideradas:** (a) Instalación nativa con winget — permanente, ocupa el 5432, menos alineada con un fixture desechable; descartada al haber Docker listo. (b) SQLite — contradice `D-024`; descartada.
+- **Consecuencias:** **No cambia `D-024`** (el motor sigue siendo PostgreSQL 17); es solo la forma de hospedarlo en desarrollo. El mismo `docker-compose.yml` puede alojar más schemas de prueba (schema-per-tenant, `D-027`). Los secretos (`.env`) no viven en el motor (`D-001`). Nota operativa: `psql` no queda en el PATH del host; se accede vía `docker exec` o psycopg (host→`localhost:55432`).
 
 ---
 

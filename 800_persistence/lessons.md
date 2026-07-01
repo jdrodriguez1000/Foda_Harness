@@ -17,6 +17,7 @@
 - [L-009 — El slice contract SELECCIONA el L0 de la letra del brief; no redefinas "L0" por criterio propio. El revisor en contexto fresco lo detecta](#l-009--el-slice-contract-selecciona-el-l0-de-la-letra-del-brief-no-redefinas-l0-por-criterio-propio-el-revisor-en-contexto-fresco-lo-detecta)
 - [L-010 — Un carril de carpeta por paso del ciclo: no metas el output de "Definir" en el carril de "Planear". Espejar a Caden no debe conflactar pasos que en FODA son distintos](#l-010--un-carril-de-carpeta-por-paso-del-ciclo-no-metas-el-output-de-definir-en-el-carril-de-planear-espejar-a-caden-no-debe-conflactar-pasos-que-en-foda-son-distintos)
 - [L-011 — Definir la arquitectura agéntica y el contrato de datos no es definir el stack: el lenguaje, el motor de datos y la forma de la app deben decidirse explícitamente antes del primer slice](#l-011--definir-la-arquitectura-agéntica-y-el-contrato-de-datos-no-es-definir-el-stack-el-lenguaje-el-motor-de-datos-y-la-forma-de-la-app-deben-decidirse-explícitamente-antes-del-primer-slice)
+- [L-012 — Verificar la presencia de una herramienta con un comando cuya salida vacía sea inequívoca; una lista vacía no es "no instalado"](#l-012--verificar-la-presencia-de-una-herramienta-con-un-comando-cuya-salida-vacía-sea-inequívoca-una-lista-vacía-no-es-no-instalado)
 
 ---
 
@@ -98,6 +99,13 @@
 - **Lección:** Es fácil confundir "tenemos la arquitectura definida" con "tenemos el stack definido". Son capas distintas: la **agéntica/de método** (cómo construimos y orquestamos) y la **de implementación** (lenguaje, motor de datos, forma de la app, patrones). Un contrato de datos rico (qué artefacto y con qué nombre) **no** dice sobre qué tecnología corre. Dejar el stack implícito en un motor *reutilizable* es peligroso: cada celda lo improvisaría distinto.
 - **Cómo aplicar:** Las decisiones de stack transversal se toman **como ADRs antes de la primera celda** que escriba código (`D-022` → `T-023`, precede a `T-014`). Regla general: si una decisión técnica afecta a **todos** los flujos por igual, no la difieras a "cuando toque ese flujo"; resuélvela arriba, transversalmente. Ver `D-022`, `D-020` (transversales), `D-015`.
 - **Fecha:** 2026-06-28
+
+### L-012 — Verificar la presencia de una herramienta con un comando cuya salida vacía sea inequívoca; una lista vacía no es "no instalado"
+- **Contexto:** En `T-014` hacía falta un motor de datos corriendo. Se chequeó si había Docker con `docker ps -a` dentro de un `if ($cmd) {...} else {"no instalado"}`.
+- **Qué pasó:** El primer chequeo concluyó **"Docker no instalado"** por una salida en blanco, cuando en realidad Docker **sí estaba instalado y corriendo** (solo que el bloque no imprimió nada porque `docker ps` no listó lo esperado / la rama se enredó). El usuario preguntó "¿y si usamos Docker?" y al re-verificar con `docker info`/`--version` apareció el engine activo con un stack de contenedores. El diagnóstico equivocado casi lleva a instalar Postgres nativo innecesariamente.
+- **Lección:** Una **salida vacía es ambigua** (puede ser "no existe" o "existe pero sin resultados/rama no tomada"). Para afirmar presencia/ausencia hay que usar una señal **positiva e inequívoca**: `docker --version` + `docker info` (engine), `Get-Command`, versión, código de salida — no inferir ausencia de un `ps` en blanco.
+- **Cómo aplicar:** Antes de concluir "X no está instalado", correr un comando de **verificación directa de X** cuya salida distinga los tres casos (no instalado / instalado-apagado / instalado-activo). Ante duda, re-verificar por otra vía antes de proponer instalar algo. Esto ahorró instalar Postgres nativo (se usó Docker → `D-028`).
+- **Fecha:** 2026-07-01
 
 <!--
 ### L-001 — <título corto>
