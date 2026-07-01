@@ -33,6 +33,7 @@
 - [D-026 — Patrones de diseño base: monolito modular por capas + hexagonal ligero (puerto/adaptador para acceso a datos)](#d-026--patrones-de-diseño-base-monolito-modular-por-capas--hexagonal-ligero-puertoadaptador-para-acceso-a-datos)
 - [D-027 — Aislamiento multi-tenant en PostgreSQL: esquema por cliente (schema-per-tenant)](#d-027--aislamiento-multi-tenant-en-postgresql-esquema-por-cliente-schema-per-tenant)
 - [D-028 — Hosting del Postgres de construcción (golden client) en Docker local, puerto 55432](#d-028--hosting-del-postgres-de-construcción-golden-client-en-docker-local-puerto-55432)
+- [D-029 — Protocolo de construcción por celda (Diseñar/Planear/Ejecutar/Probar/Verificar) dimensionado a E4: carriles separados, peso mínimo por artefacto, independencia creciente (3 contextos frescos)](#d-029--protocolo-de-construcción-por-celda-diseñarplanearejecutarprobarverificar-dimensionado-a-e4-carriles-separados-peso-mínimo-por-artefacto-independencia-creciente-3-contextos-frescos)
 
 ---
 
@@ -297,6 +298,33 @@
 - **Decisión:** Hospedar el Postgres de **construcción** en un **contenedor Docker local** (`docker-compose.yml` en `720_build/golden_client/`): imagen `postgres:17-alpine`, contenedor `foda_golden_db`, base `foda`, **puerto host `55432`** (el 5432 estaba ocupado por otros contenedores del usuario), credenciales en `.env` **gitignored**, schema `golden_client` creado por script de init. Es infra **desechable y reproducible** (`docker compose down -v` = reset del fixture), que casa con el golden client como fixture reseteable (`D-012`).
 - **Alternativas consideradas:** (a) Instalación nativa con winget — permanente, ocupa el 5432, menos alineada con un fixture desechable; descartada al haber Docker listo. (b) SQLite — contradice `D-024`; descartada.
 - **Consecuencias:** **No cambia `D-024`** (el motor sigue siendo PostgreSQL 17); es solo la forma de hospedarlo en desarrollo. El mismo `docker-compose.yml` puede alojar más schemas de prueba (schema-per-tenant, `D-027`). Los secretos (`.env`) no viven en el motor (`D-001`). Nota operativa: `psql` no queda en el PATH del host; se accede vía `docker exec` o psycopg (host→`localhost:55432`).
+
+---
+
+### D-029 — Protocolo de construcción por celda (Diseñar/Planear/Ejecutar/Probar/Verificar) dimensionado a E4: carriles separados, peso mínimo por artefacto, independencia creciente (3 contextos frescos)
+- **Estado:** Aceptada (cierra **T-021**; extiende `D-021 §6` a los 5 pasos restantes; complementa `D-020`)
+- **Fecha:** 2026-07-01
+- **Contexto:** `D-021 §6` solo especificó el protocolo agéntico del paso **"Definir"** (nivel banda). Faltaba detallar los 5 pasos del **nivel celda** (flujo × banda): **Diseñar → Planear → Ejecutar → Probar → Verificar**. El usuario pidió el protocolo **proporcional a E4** (Mínima Complejidad) para el Tracer Bullet, y resolvió dos preguntas de forma: (1) los pasos ligeros se mantienen como **carriles separados** (no se fusionan en una sola sesión); (2) **Probar** y **Verificar** corren en **dos sesiones frescas separadas** (no una sola C que haga ambos).
+- **Decisión:**
+  1. **Invariante que nunca se relaja** (toda banda): **quien ejecuta ≠ quien verifica** (`P1`, `P3`); **gate humano** al cierre de celda (`P5`). Nunca autoaprobación.
+  2. **La proporcionalidad (`P6`/`E4`) se expresa como PESO del artefacto, no como fusión de pasos.** Los 6 pasos conservan su carril propio; en Tracer Bullet, **Diseñar y Planear son ligeros** (≤1 página / checklist). Si el diseño de una celda excede una página, es señal de que el L0 está mal recortado → volver a Definir (`L-009`).
+  3. **La independencia crece hacia el final:** **Ejecutar** (Instancia B, contexto propio), **Probar** (Instancia C-test, **contexto fresco**), **Verificar** (Instancia C-verify, **contexto fresco e independiente del tester**) → **tres contextos frescos distintos**. Reconcilia con `D-020` (en Tracer Bullet A+B pueden colapsar, pero la garantía no).
+  4. **Mapa por paso** (nivel celda, en orden de tubería del `slice_contract`):
+
+     | Paso | Instancia | Contexto | Artefacto / carril | Rigor E4 |
+     |------|-----------|----------|--------------------|----------|
+     | Diseñar | B | propio | `705_design/<banda>/<flujo>.md` | ≤1 pág: qué hace el agente `foda-*`, qué skill invoca, qué schema produce, qué lee/escribe (bronze/silver/gold) |
+     | Planear | B | propio | `710_plan/<banda>/<flujo>.md` | checklist de construcción (crear agente, skill, schema, contract) |
+     | Ejecutar | B (+workers `E7`) | propio | `720_build/<banda>/<flujo>/{agents,skills,schemas,contract}` | escribe las definiciones + código determinista (`D-023`/`D-026`) |
+     | Probar | **C-test** | **fresco** | `.../deliverables/` + `.../evaluation/` | corre la celda contra C1 (`E9`: 7 SKUs×36m); valida schema, contract, determinismo (semilla 42) |
+     | Verificar | **C-verify** + humano | **fresco** | `.../evaluation/` (veredicto) + gate `P5` | audita deliverable vs `slice_contract` (Done) y brief L0; emite `APROBADO`/`REQUIERE SUBSANACIÓN` |
+
+  5. **Mecánica de encadenamiento (`D-021 §7`):** un subagente **termina y devuelve control** a la sesión principal (A), que encadena el siguiente; un subagente no lanza a su hermano (modelo plano `D-009`, `L-002`).
+  6. **Loop y tope (`P6`):** si `REQUIERE SUBSANACIÓN`, A reinvoca el bloque de construcción; **tope ~2 rondas**; si no converge, **escala al humano** en vez de iterar.
+  7. **Disciplina de snapshots (`D-012`):** cada celda consume el snapshot de la celda anterior y **congela** el suyo al aprobar; ese snapshot es la entrada del siguiente flujo. Demuestra el end-to-end acumulando estado sobre C1, no probando flujos aislados.
+  8. **Mapeo al ciclo SDD+TDD (§7):** Diseñar≈SPEC, Planear≈plan, Ejecutar≈GREEN, Probar≈RED+corrida, Verificar≈EVAL. La §7 es la ambición (Ln); este protocolo es su realización proporcional a E4 para la banda Tracer Bullet.
+- **Alternativas consideradas:** (a) **Colapsar Diseñar+Planear+Ejecutar en una sola sesión** (propuesta inicial por E4) — descartada por el usuario: se mantienen carriles separados aunque ligeros, para trazabilidad por paso (`P8`). (b) **Una sola sesión fresca C para Probar+Verificar** — descartada por el usuario: dos sesiones frescas separadas dan mayor independencia (`P3`; el tester tampoco es el verificador). (c) Detallar los 5 pasos con el mismo peso que "Definir" — descartada: rompería E4 para un esqueleto.
+- **Consecuencias:** Cierra **T-021** y **desbloquea la construcción de la primera celda `010_discovery`** (nivel L0) con este protocolo. Queda como plantilla dimensionable: en bandas superiores (Stabilization→Final) el mismo protocolo sube de peso (diseño/plan dejan de ser ≤1 pág) sin cambiar el invariante ni el mapa de instancias. Sección operativa registrada en `950_guideline/methodology.md §7`. Lección `L-013`.
 
 ---
 

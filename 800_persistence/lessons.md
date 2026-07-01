@@ -18,6 +18,7 @@
 - [L-010 — Un carril de carpeta por paso del ciclo: no metas el output de "Definir" en el carril de "Planear". Espejar a Caden no debe conflactar pasos que en FODA son distintos](#l-010--un-carril-de-carpeta-por-paso-del-ciclo-no-metas-el-output-de-definir-en-el-carril-de-planear-espejar-a-caden-no-debe-conflactar-pasos-que-en-foda-son-distintos)
 - [L-011 — Definir la arquitectura agéntica y el contrato de datos no es definir el stack: el lenguaje, el motor de datos y la forma de la app deben decidirse explícitamente antes del primer slice](#l-011--definir-la-arquitectura-agéntica-y-el-contrato-de-datos-no-es-definir-el-stack-el-lenguaje-el-motor-de-datos-y-la-forma-de-la-app-deben-decidirse-explícitamente-antes-del-primer-slice)
 - [L-012 — Verificar la presencia de una herramienta con un comando cuya salida vacía sea inequívoca; una lista vacía no es "no instalado"](#l-012--verificar-la-presencia-de-una-herramienta-con-un-comando-cuya-salida-vacía-sea-inequívoca-una-lista-vacía-no-es-no-instalado)
+- [L-013 — El Escalamiento Proporcional (P6/E4) se expresa como PESO del artefacto, no como fusión de pasos; la independencia se mantiene separando ejecutar/probar/verificar en contextos frescos](#l-013--el-escalamiento-proporcional-p6e4-se-expresa-como-peso-del-artefacto-no-como-fusión-de-pasos-la-independencia-se-mantiene-separando-ejecutarprobarverificar-en-contextos-frescos)
 
 ---
 
@@ -105,6 +106,13 @@
 - **Qué pasó:** El primer chequeo concluyó **"Docker no instalado"** por una salida en blanco, cuando en realidad Docker **sí estaba instalado y corriendo** (solo que el bloque no imprimió nada porque `docker ps` no listó lo esperado / la rama se enredó). El usuario preguntó "¿y si usamos Docker?" y al re-verificar con `docker info`/`--version` apareció el engine activo con un stack de contenedores. El diagnóstico equivocado casi lleva a instalar Postgres nativo innecesariamente.
 - **Lección:** Una **salida vacía es ambigua** (puede ser "no existe" o "existe pero sin resultados/rama no tomada"). Para afirmar presencia/ausencia hay que usar una señal **positiva e inequívoca**: `docker --version` + `docker info` (engine), `Get-Command`, versión, código de salida — no inferir ausencia de un `ps` en blanco.
 - **Cómo aplicar:** Antes de concluir "X no está instalado", correr un comando de **verificación directa de X** cuya salida distinga los tres casos (no instalado / instalado-apagado / instalado-activo). Ante duda, re-verificar por otra vía antes de proponer instalar algo. Esto ahorró instalar Postgres nativo (se usó Docker → `D-028`).
+- **Fecha:** 2026-07-01
+
+### L-013 — El Escalamiento Proporcional (P6/E4) se expresa como PESO del artefacto, no como fusión de pasos; la independencia se mantiene separando ejecutar/probar/verificar en contextos frescos
+- **Contexto:** Al detallar el protocolo de construcción por celda (`T-021`/`D-029`) "proporcional a E4", la propuesta inicial fue **colapsar** Diseñar+Planear+Ejecutar en una sola sesión y juntar Probar+Verificar en una sola C fresca.
+- **Qué pasó:** El usuario rechazó ambos colapsos: pidió **carriles separados** para los pasos ligeros y **dos sesiones frescas separadas** para Probar y Verificar. La proporcionalidad correcta no era fusionar pasos, sino **bajar el peso de cada artefacto** (diseño/plan ≤1 pág) manteniendo la trazabilidad por paso (`P8`) y aumentando la independencia hacia el final (`P3`).
+- **Lección:** "Dimensionar a E4" ≠ "eliminar pasos". El `P6` (Escalamiento Proporcional) se aplica al **esfuerzo/peso** de cada artefacto, no a la **estructura** del ciclo. Los invariantes de separación de roles (`P1`/`P3`) y el gate humano (`P5`) no se relajan por bajar de banda; de hecho la independencia crítica (quien ejecuta ≠ quien prueba ≠ quien verifica) se **preserva o refuerza**.
+- **Cómo aplicar:** Al bajar de banda, reducir el tamaño y la ceremonia de los artefactos (páginas, checklists), pero conservar los 6 carriles y los 3 contextos frescos de Ejecutar/Probar/Verificar. Si se siente la tentación de fusionar pasos "porque es ligero", es señal de recortar peso, no estructura.
 - **Fecha:** 2026-07-01
 
 <!--

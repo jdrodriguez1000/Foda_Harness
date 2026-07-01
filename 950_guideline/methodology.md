@@ -290,6 +290,34 @@ El ciclo SDD+TDD es un modelo mental universal aplicable a cualquier dominio:
 | **GREEN**    | Escribe código hasta que el test pasa.           | Redacta el contenido hasta cubrir todos los puntos del checklist.  | Ejecuta la transformación hasta producir el artefacto que pasa las aserciones (ej: corre el torneo de modelos). |
 | **REFACTOR** | Limpia el código y aplica patrones de diseño.    | Mejora el estilo, la claridad y el uso del Lenguaje Ubicuo.        | Optimiza features/hiperparámetros sin degradar la métrica verificada; consolida el config del flujo. |
 
+### Protocolo de construcción por celda — dimensionado por banda (D-021 §6 / D-029)
+El ciclo SDD+TDD anterior es la **ambición (Ln)**. Su realización concreta por **celda** (flujo × banda)
+se **dimensiona a la banda** vía Escalamiento Proporcional (`P6`) y Mínima Complejidad (`E4`). En la banda
+**Tracer Bullet** el peso ya vive en el `slice_contract` (nivel banda) y en la **verificación**; los pasos
+intermedios se dimensionan al mínimo **sin fusionarse**.
+
+**Invariante (toda banda):** quien ejecuta ≠ quien verifica (`P1`, `P3`); gate humano al cierre de celda
+(`P5`). La **independencia crece hacia el final**: Ejecutar, Probar y Verificar corren en **tres contextos
+frescos distintos** (el tester tampoco es el verificador).
+
+**La proporcionalidad se expresa como PESO del artefacto, no como fusión de pasos.** Los 6 pasos conservan
+su carril propio; en Tracer Bullet, Diseñar y Planear son ligeros (≤1 pág / checklist).
+
+| Paso | Instancia | Contexto | Artefacto / carril | Rigor en Tracer Bullet |
+| :--- | :--- | :--- | :--- | :--- |
+| Definir (banda) | A + humano | — | `703_definition/<banda>/{slice_contract.md, bdd.md}` | el peso de la banda |
+| Diseñar | B | propio | `705_design/<banda>/<flujo>.md` | ≤1 pág (agente, skill, schema, I/O de capas) |
+| Planear | B | propio | `710_plan/<banda>/<flujo>.md` | checklist de construcción |
+| Ejecutar | B (+workers, `E7`) | propio | `720_build/<banda>/<flujo>/{agents,skills,schemas,contract}` | definiciones + código determinista |
+| Probar | **C-test** | **fresco** | `.../deliverables/` + `.../evaluation/` | corre la celda contra el golden client (`E9`); valida schema/contract/determinismo |
+| Verificar | **C-verify** + humano | **fresco** | `.../evaluation/` (veredicto) + gate | audita vs `slice_contract` y brief L0; `APROBADO`/`REQUIERE SUBSANACIÓN` |
+
+**Mecánica:** un subagente termina y **devuelve control a la sesión principal** (A), que encadena el siguiente
+(modelo plano, `D-009`). Loop subsanación con **tope ~2 rondas**; si no converge, **escala al humano**.
+**Snapshots (`D-012`):** cada celda consume el snapshot previo y congela el suyo al aprobar; ese snapshot
+alimenta el siguiente flujo, demostrando el end-to-end acumulado sobre C1. En bandas superiores el mismo
+protocolo sube de peso (diseño/plan dejan de ser ≤1 pág) sin cambiar el invariante ni el mapa de instancias.
+
 ### Evaluación Temprana (E9)
 No esperar a tener el harness completo para evaluar. La evaluación temprana es la intervención de mayor impacto en el ciclo de vida: los ajustes realizados aquí tienen un efecto de **30%–80% en la calidad final** a un costo mínimo comparado con corregir tarde.
 

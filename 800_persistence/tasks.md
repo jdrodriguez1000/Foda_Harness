@@ -25,7 +25,7 @@
 
 | ID | Estado | Tarea |
 |----|--------|-------|
-| — | — | _(ninguna en progreso; **próxima tarea: T-021** — detallar el protocolo agéntico de los pasos restantes del ciclo `D-021`; luego construir la primera celda `010_discovery`)_ |
+| — | — | _(ninguna en progreso; **próxima tarea: construir la primera celda `010_discovery`** L0 con el protocolo de celda `D-029`)_ |
 
 ## Pendientes
 
@@ -36,13 +36,13 @@
 | ID | Estado | Tarea |
 |----|--------|-------|
 | T-015 | `[ ]` | Al redactar el brief de Discovery/Onboarding (T-019): los contratos (`client_register.yaml`, `map_client_data.json`) deben capturar el **grain** multinivel de producto (familia→categoría→subcategoría→SKU) y geografía (región→país→ciudad→sede) y propagarlo a la tubería (`D-014`). |
-| T-021 | `[ ]` | **Detallar el protocolo agéntico de los pasos restantes del ciclo `D-021`** (Diseñar, Planear, Ejecutar, Probar, Verificar) con el mismo nivel del paso "Definir" (escritor/revisor independiente/gate, encadenamiento por la sesión principal, tope de iteraciones E5). El paso "Definir" ya quedó especificado en `D-021`. |
 | T-003 | `[ ]` | Diseñar el instalador `install.sh` (copia de definiciones del flujo + transversales, init de git, esqueleto de instancia). Inspirarse en `caden-setup` (ver `L-006`). |
 
 ## Completadas
 
 | ID | Estado | Tarea | Fecha |
 |----|--------|-------|-------|
+| T-021 | `[x]` | **Detallar el protocolo agéntico de los pasos restantes de `D-021`** (Diseñar, Planear, Ejecutar, Probar, Verificar) **proporcional a E4** (`D-029`): 6 carriles separados con peso mínimo por artefacto (diseño/plan ≤1 pág), invariante `P1`/`P3`/`P5`, independencia creciente (Ejecutar/Probar/Verificar en 3 contextos frescos), tope ~2 rondas con escalamiento, disciplina de snapshots. Registrado en `methodology.md §7` y `L-013`. | 2026-07-01 |
 | T-001 | `[x]` | Crear `800_persistence/` con los 4 archivos de memoria (progress, tasks, lessons, decisions). | 2026-06-27 |
 | T-004 | `[x]` | Crear `CLAUDE.md` con instrucciones para todos los agentes de Claude Code. | 2026-06-27 |
 | T-005 | `[x]` | Crear `.claude/` con `commands/` y los settings `settings.json` (proyecto) y `settings.local.json` (local). | 2026-06-27 |
