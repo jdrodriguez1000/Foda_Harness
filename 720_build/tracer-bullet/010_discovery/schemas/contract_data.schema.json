@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://sabbia.io/foda/schemas/contract_data.schema.json",
+  "title": "contract_data (010_discovery L0)",
+  "description": "Contrato de datos Sabbia <-> empresa ABC emitido por el flujo 010_discovery. Declara los archivos que enviara el cliente, el medio de acceso, la periodicidad de la demanda, el horizonte de pronostico, el grain producto x geografia (D-014) y los campos financieros presentes en la fuente. Este schema valida la forma minima L0; no asume dominio de negocio concreto.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "archivos_esperados",
+    "medio_acceso",
+    "periodicidad",
+    "horizonte_meses",
+    "grain",
+    "financieros_en_fuente"
+  ],
+  "properties": {
+    "archivos_esperados": {
+      "type": "array",
+      "description": "Archivos que el cliente enviara (numero y naturaleza declarados en Discovery).",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["nombre", "naturaleza", "medio"],
+        "additionalProperties": true,
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Nombre o identificador del archivo esperado (p. ej. 'demanda_historica')."
+          },
+          "naturaleza": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Que contiene el archivo (p. ej. 'demanda historica mensual por SKU y sede')."
+          },
+          "medio": {
+            "type": "string",
+            "enum": ["csv", "base_de_datos", "api"],
+            "description": "Medio de acceso concreto de este archivo."
+          }
+        }
+      }
+    },
+    "medio_acceso": {
+      "type": "string",
+      "enum": ["csv", "base_de_datos", "api"],
+      "description": "Medio de acceso principal a los datos del cliente."
+    },
+    "periodicidad": {
+      "type": "string",
+      "enum": [
+        "semanal",
+        "quincenal",
+        "mensual",
+        "bimestral",
+        "trimestral",
+        "semestral",
+        "anual"
+      ],
+      "description": "Periodicidad de la demanda; rige la agregacion en 035_derivation (D-014)."
+    },
+    "horizonte_meses": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Horizonte de pronostico en meses. Para C1 L0 = 6 (coincide con el hold_out del golden client)."
+    },
+    "grain": {
+      "type": "object",
+      "description": "Grain declarado de las series (D-014). El producto cartesiano producto x geografia x periodicidad fija la cardinalidad de series aguas abajo.",
+      "required": ["producto", "geografia"],
+      "additionalProperties": false,
+      "properties": {
+        "producto": {
+          "type": "array",
+          "description": "Jerarquia de producto de mayor a menor (familia -> categoria -> subcategoria -> sku).",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "geografia": {
+          "type": "array",
+          "description": "Jerarquia de geografia de mayor a menor (region -> pais -> ciudad -> sede).",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "financieros_en_fuente": {
+      "type": "array",
+      "description": "Campos financieros presentes en la fuente del cliente (se leen de bronze en 070_reporting, D-019). No es lista cerrada.",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

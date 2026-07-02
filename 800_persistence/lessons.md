@@ -19,6 +19,7 @@
 - [L-011 — Definir la arquitectura agéntica y el contrato de datos no es definir el stack: el lenguaje, el motor de datos y la forma de la app deben decidirse explícitamente antes del primer slice](#l-011--definir-la-arquitectura-agéntica-y-el-contrato-de-datos-no-es-definir-el-stack-el-lenguaje-el-motor-de-datos-y-la-forma-de-la-app-deben-decidirse-explícitamente-antes-del-primer-slice)
 - [L-012 — Verificar la presencia de una herramienta con un comando cuya salida vacía sea inequívoca; una lista vacía no es "no instalado"](#l-012--verificar-la-presencia-de-una-herramienta-con-un-comando-cuya-salida-vacía-sea-inequívoca-una-lista-vacía-no-es-no-instalado)
 - [L-013 — El Escalamiento Proporcional (P6/E4) se expresa como PESO del artefacto, no como fusión de pasos; la independencia se mantiene separando ejecutar/probar/verificar en contextos frescos](#l-013--el-escalamiento-proporcional-p6e4-se-expresa-como-peso-del-artefacto-no-como-fusión-de-pasos-la-independencia-se-mantiene-separando-ejecutarprobarverificar-en-contextos-frescos)
+- [L-014 — En Windows Git Bash, encadenar `cp -r` con un comando sobre el directorio copiado en el mismo invocation block produce condición de carrera (archivos no visibles aún)](#l-014--en-windows-git-bash-encadenar-cp--r-con-un-comando-sobre-el-directorio-copiado-en-el-mismo-invocation-block-produce-condición-de-carrera-archivos-no-visibles-aún)
 
 ---
 
@@ -113,6 +114,13 @@
 - **Qué pasó:** El usuario rechazó ambos colapsos: pidió **carriles separados** para los pasos ligeros y **dos sesiones frescas separadas** para Probar y Verificar. La proporcionalidad correcta no era fusionar pasos, sino **bajar el peso de cada artefacto** (diseño/plan ≤1 pág) manteniendo la trazabilidad por paso (`P8`) y aumentando la independencia hacia el final (`P3`).
 - **Lección:** "Dimensionar a E4" ≠ "eliminar pasos". El `P6` (Escalamiento Proporcional) se aplica al **esfuerzo/peso** de cada artefacto, no a la **estructura** del ciclo. Los invariantes de separación de roles (`P1`/`P3`) y el gate humano (`P5`) no se relajan por bajar de banda; de hecho la independencia crítica (quien ejecuta ≠ quien prueba ≠ quien verifica) se **preserva o refuerza**.
 - **Cómo aplicar:** Al bajar de banda, reducir el tamaño y la ceremonia de los artefactos (páginas, checklists), pero conservar los 6 carriles y los 3 contextos frescos de Ejecutar/Probar/Verificar. Si se siente la tentación de fusionar pasos "porque es ligero", es señal de recortar peso, no estructura.
+- **Fecha:** 2026-07-01
+
+### L-014 — En Windows Git Bash, encadenar `cp -r` con un comando sobre el directorio copiado en el mismo invocation block produce condición de carrera (archivos no visibles aún)
+- **Contexto:** Durante las pruebas de la skill `validate_discovery.py` se prepararon fixtures en el scratchpad copiando el directorio base con `cp -r` y acto seguido mutando archivos con `python -c` en el mismo bloque Bash.
+- **Qué pasó:** El directorio destino quedaba vacío o con archivos faltantes en comandos inmediatamente posteriores dentro del mismo bloque, aunque una verificación con `ls` en un bloque separado mostraba los archivos presentes. El problema desapareció al consolidar todo (creación de fixtures + ejecución de la skill) en un único proceso Python usando `tempfile.mkdtemp()` y `shutil.copy`.
+- **Lección:** En Windows, el VFS de Git Bash puede no reflejar de inmediato los archivos recién creados por un subproceso en el mismo invocation block. La señal clásica es: `ls` en otro bloque los ve, pero el comando siguiente en el mismo bloque no.
+- **Cómo aplicar:** Para preparar fixtures temporales + invocar una herramienta sobre ellos, hacer todo dentro de un único proceso Python (un script o un `python -` heredoc). No encadenar `cp`/`mkdir` + comando CLI sobre el mismo directorio en el mismo bloque Bash en Windows.
 - **Fecha:** 2026-07-01
 
 <!--

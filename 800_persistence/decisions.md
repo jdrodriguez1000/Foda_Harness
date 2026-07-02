@@ -34,6 +34,7 @@
 - [D-027 — Aislamiento multi-tenant en PostgreSQL: esquema por cliente (schema-per-tenant)](#d-027--aislamiento-multi-tenant-en-postgresql-esquema-por-cliente-schema-per-tenant)
 - [D-028 — Hosting del Postgres de construcción (golden client) en Docker local, puerto 55432](#d-028--hosting-del-postgres-de-construcción-golden-client-en-docker-local-puerto-55432)
 - [D-029 — Protocolo de construcción por celda (Diseñar/Planear/Ejecutar/Probar/Verificar) dimensionado a E4: carriles separados, peso mínimo por artefacto, independencia creciente (3 contextos frescos)](#d-029--protocolo-de-construcción-por-celda-diseñarplanearejecutarprobarverificar-dimensionado-a-e4-carriles-separados-peso-mínimo-por-artefacto-independencia-creciente-3-contextos-frescos)
+- [D-030 — El agente worker `foda-discovery` lleva `tools: Read, Write, Bash` para invocar la skill de validación al final de su procedimiento (opción A, usuario confirma)](#d-030--el-agente-worker-foda-discovery-lleva-tools-read-write-bash-para-invocar-la-skill-de-validación-al-final-de-su-procedimiento-opción-a-usuario-confirma)
 
 ---
 
@@ -325,6 +326,14 @@
   8. **Mapeo al ciclo SDD+TDD (§7):** Diseñar≈SPEC, Planear≈plan, Ejecutar≈GREEN, Probar≈RED+corrida, Verificar≈EVAL. La §7 es la ambición (Ln); este protocolo es su realización proporcional a E4 para la banda Tracer Bullet.
 - **Alternativas consideradas:** (a) **Colapsar Diseñar+Planear+Ejecutar en una sola sesión** (propuesta inicial por E4) — descartada por el usuario: se mantienen carriles separados aunque ligeros, para trazabilidad por paso (`P8`). (b) **Una sola sesión fresca C para Probar+Verificar** — descartada por el usuario: dos sesiones frescas separadas dan mayor independencia (`P3`; el tester tampoco es el verificador). (c) Detallar los 5 pasos con el mismo peso que "Definir" — descartada: rompería E4 para un esqueleto.
 - **Consecuencias:** Cierra **T-021** y **desbloquea la construcción de la primera celda `010_discovery`** (nivel L0) con este protocolo. Queda como plantilla dimensionable: en bandas superiores (Stabilization→Final) el mismo protocolo sube de peso (diseño/plan dejan de ser ≤1 pág) sin cambiar el invariante ni el mapa de instancias. Sección operativa registrada en `950_guideline/methodology.md §7`. Lección `L-013`.
+
+### D-030 — El agente worker `foda-discovery` lleva `tools: Read, Write, Bash` para invocar la skill de validación al final de su procedimiento (opción A, usuario confirma)
+- **Estado:** Aceptada
+- **Fecha:** 2026-07-01
+- **Contexto:** El diseño aprobado (`705_design/tracer-bullet/010_discovery.md §3`) especificaba `tools: Read, Write` pero al mismo tiempo exigía que el agente invocara la skill `validate_discovery.py` al final. Esto es contradictorio: sin `Bash` no se puede ejecutar un proceso externo. Al redactar `agents/foda-discovery.md` se detectó la inconsistencia y se presentaron dos opciones al usuario: (A) añadir `Bash` al worker para que se autovalide; (B) mantener `Read, Write` y delegar la validación al orquestador.
+- **Decisión:** **Opción A**: el agente lleva `tools: Read, Write, Bash`. El worker es autónomo end-to-end: sintetiza los 3 artefactos y luego invoca la skill vía Bash, reportando solo el path del reporte (E6). El diseño (`705_design`) y el plan (`710_plan`) fueron actualizados para reflejar `Read, Write, Bash`.
+- **Alternativas consideradas:** Opción B (`Read, Write` sin `Bash`, orquestador corre la skill) — más purista en separación de responsabilidades pero crea acoplamiento entre el orquestador y la skill; hace el paso Probar más verboso. Descartada por el usuario.
+- **Consecuencias:** El worker es más cohesivo y el paso Probar se simplifica (basta ejecutar el agente y leer el reporte). Establece el patrón para celdas posteriores donde el worker también deba autovalidarse: si la validación es determinista y se puede expresar como CLI, añadir `Bash` al worker.
 
 ---
 

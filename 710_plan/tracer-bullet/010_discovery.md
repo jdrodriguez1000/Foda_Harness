@@ -17,7 +17,7 @@ es lo último porque consume schema y skill).
 | 1 | `cell_contract.md` | `contract/` | Done de la celda + las 7 aserciones RED del diseño §5. Fuente de verdad de "terminado". |
 | 2 | `contract_data.schema.json` | `schemas/` | JSON Schema (draft-07). Campos obligatorios: `archivos_esperados[]`, `medio_acceso`, `periodicidad`, `horizonte_meses`, `grain.producto[]`, `grain.geografia[]`, `financieros_en_fuente[]`. |
 | 3 | `validate_discovery.py` | `skills/` | Python stdlib + `pyyaml` + `jsonschema`. CLI: `python validate_discovery.py --deliverables <dir> --schema <path> --report <out>`. Determinista (sin red, sin timestamps en el veredicto). |
-| 4 | `foda-discovery.md` | `agents/` | Definición del worker (frontmatter `tools: Read, Write`; sin `Agent`). Instrucciones: leer los 2 cuestionarios → emitir los 3 artefactos en `deliverables/` → invocar la skill → reportar path del `validation_report.json`. |
+| 4 | `foda-discovery.md` | `agents/` | Definición del worker (frontmatter `tools: Read, Write, Bash`; sin `Agent`). Instrucciones: leer los 2 cuestionarios → emitir los 3 artefactos en `deliverables/` → invocar la skill (Bash) → reportar path del `validation_report.json`. |
 
 ## 2. Detalle por artefacto
 
@@ -43,7 +43,7 @@ es lo último porque consume schema y skill).
 - [ ] Exit code 0 si `ok`, 1 si falla (para el paso Probar).
 
 ### 4) `agents/foda-discovery.md`
-- [ ] Frontmatter: `name: foda-discovery`, `tools: Read, Write`, `model` a criterio de A.
+- [ ] Frontmatter: `name: foda-discovery`, `tools: Read, Write, Bash` (`Bash` para correr la skill), `model` a criterio de A.
 - [ ] Rol: worker de síntesis; **no** spawnea (modelo plano `D-009`).
 - [ ] Procedimiento: (a) leer ambos cuestionarios; (b) redactar `client_register.yaml`; (c) `business_hypothesis.md` (≥1 hipótesis con `testeable_en`); (d) `contract_data.json` conforme al schema; (e) correr la skill; (f) reportar solo el path del reporte (E6).
 - [ ] Recordatorio de planos: los deliverables son `fda-*`; aquí se emiten a `deliverables/` solo para probar.

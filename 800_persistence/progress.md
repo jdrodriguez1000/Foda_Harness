@@ -28,14 +28,14 @@ científico de datos como revisor/aprobador.
 
 ## Estado actual
 
-**Fase:** Fase 1 de `D-015` — **Celda `010_discovery` L0 en construcción**: pasos Diseñar y Planear
-completados y aprobados por el usuario. **Próximo paso: Ejecutar** (construir los 4 artefactos de la celda
-en `720_build/tracer-bullet/010_discovery/`).
-- `705_design/tracer-bullet/010_discovery.md` **APROBADO** (diseño ligero E4): agente `foda-discovery.md`
-  (síntesis NL→artefactos) + skill `validate_discovery.py` (determinista) + schema `contract_data.schema.json`.
-- `710_plan/tracer-bullet/010_discovery.md` **APROBADO** (checklist de construcción): orden
-  `cell_contract.md` → schema → skill → agente; Python + `jsonschema` + `pyyaml`; sin Postgres (Discovery
-  no toca capas de datos); determinismo garantizado por ausencia de timestamps en el reporte de validación.
+**Fase:** Fase 1 de `D-015` — **Celda `010_discovery` L0: paso Ejecutar completado.** Los 4 artefactos
+están construidos en `720_build/tracer-bullet/010_discovery/`. **Próximo paso: Probar** (contexto fresco
+C-test, TR-2).
+- `contract/cell_contract.md` — fuente de verdad del Done L0 + 7 aserciones RED.
+- `schemas/contract_data.schema.json` — JSON Schema draft-07 (7 campos obligatorios); verificado con muestra C1 y caso negativo.
+- `skills/validate_discovery.py` — skill determinista (A1–A5); probada con happy path + 7 casos negativos; exit 0/1.
+- `agents/foda-discovery.md` — worker de síntesis (`tools: Read, Write, Bash`; sin `Agent`; invoca la skill al final).
+- Reconciliada la contradicción `tools:` en diseño y plan aprobados (`Read, Write` → `Read, Write, Bash`, decisión D-030).
 (Hitos previos: T-021/protocolo D-029, T-014/golden client C1, T-023/stack D-023..D-027, Fase 0 cerrada.)
 **Punto actual:** los 14 briefs (`010`–`075`) viven en `700_brief/`, todos en estado **APROBADO**, cada
 uno con su **escalera de capacidades L0→Ln** (`D-016`). El **mapa de procesos oficial**
@@ -109,22 +109,33 @@ físico de bronze/silver/gold, forma de la app, patrones). T-023 es **bloqueante
 | 2026-07-01 | **T-023 — Stack tecnológico de la instancia decidido (`D-023..D-027`):** (1) Python + pandas/polars/scikit-learn/numpy/SQLAlchemy (`D-023`); (2) PostgreSQL para bronze/silver/gold (`D-024`); (3) app batch multi-cliente, 1 DS para N clientes, gate humano (`D-025`); (4) monolito modular por capas + hexagonal ligero (`D-026`); (5) schema-per-tenant (`D-027`). Cuestionario de diseño de sistemas completado (`985_inputs/questionnaire_DS.md`). Documento de diseño del sistema creado: `955_architecture/design_system.md`. **T-014 desbloqueada.** |
 | 2026-07-01 | **T-014 — Infraestructura de golden client C1 construida y verificada.** Diseño `720_build/golden_client/C1_design.md` (aprobado); frontera decidida: el generador emite **fuente cruda** (CSV), no bronze (nace en la celda `020`). **Postgres 17 en Docker** (`docker-compose.yml`, `foda_golden_db`, `localhost:55432`, DB `foda`, schema `golden_client`; `D-028`, `.env` gitignored). **Generador** `generator/generate_c1.py` determinista (semilla 42): 7 SKUs × 36 meses mensuales, estacionalidad con pico en diciembre (hipótesis testeable), ruido de calidad (nulos+duplicados) y split hold-out K=6. Fuente cruda C1 (`demanda_historica.csv` 214 filas + `demanda_holdout.csv` 42 + `generation_report.json`) y **cuestionarios** pre-respondidos (insumo de `010` L0). Verificado: pico dic. (711→1302), determinismo (hash igual al regenerar), conexión host→contenedor por psycopg. Lección `L-012` (verificar presencia de herramientas). |
 | 2026-07-01 | **T-021 — Protocolo de construcción por celda detallado y persistido (`D-029`).** Extiende `D-021 §6` (que solo cubría "Definir") a los 5 pasos restantes del nivel celda, **dimensionado a E4**. Decisiones de forma del usuario: los pasos ligeros se mantienen como **carriles separados** (no fusionados) y **Probar/Verificar** corren en **dos sesiones frescas separadas**. Reencuadre clave: la proporcionalidad (`P6`/`E4`) es **peso del artefacto, no fusión de pasos**; en Tracer Bullet diseño/plan son ≤1 pág. **Invariante** `P1`/`P3`/`P5` + **independencia creciente**: Ejecutar (B) → Probar (C-test fresco) → Verificar (C-verify fresco) = 3 contextos frescos. Tope ~2 rondas con escalamiento; disciplina de snapshots (`D-012`). Sección operativa en `methodology.md §7`; lección `L-013`. |
+| 2026-07-01 | **T-024 (paso Ejecutar completado) — Celda `010_discovery` L0: 4 artefactos construidos.** `cell_contract.md` + `contract_data.schema.json` + `validate_discovery.py` (determinista, 8 casos probados) + `foda-discovery.md` (`tools: Read,Write,Bash`, D-030). Próximos: Probar (fresco) → Verificar (fresco + gate). Lección `L-014`. |
 | 2026-07-01 | **T-024 (en progreso) — Celda `010_discovery` L0: Diseñar y Planear completados y APROBADOS.** `705_design/tracer-bullet/010_discovery.md` (diseño ligero E4): reparto agente/skill decidido (síntesis NL = agente `foda-discovery.md`; validación/consistencia = skill `validate_discovery.py` determinista sin timestamps); schema `contract_data.schema.json`; 7 aserciones de aceptación incluyendo consistencia registro⇄contrato (`D-014`) y gate humano. `710_plan/tracer-bullet/010_discovery.md` (checklist): orden `cell_contract → schema → skill → agente`; Python + `jsonschema` + `pyyaml`; sin Postgres. Pendientes: Ejecutar → Probar (fresco) → Verificar (fresco + gate humano). |
 
 ## Próximo paso
 
-**Celda `010_discovery` L0 — Diseñar y Planear APROBADOS:** pasos Ejecutar → Probar → Verificar pendientes.
+**Celda `010_discovery` L0 — Ejecutar completado:** pasos Probar → Verificar pendientes.
 
-1. **Ejecutar** la celda: construir en `720_build/tracer-bullet/010_discovery/` los 4 artefactos en el orden
-   del plan: `contract/cell_contract.md` → `schemas/contract_data.schema.json` → `skills/validate_discovery.py`
-   → `agents/foda-discovery.md`. Ambiente: Python + `jsonschema` + `pyyaml`; sin Postgres.
-2. **Probar** (contexto fresco C-test): ejecutar el agente sobre C1, correr la skill, verificar las 7
-   aserciones de `cell_contract.md`, validar determinismo.
-3. **Verificar** (contexto fresco C-verify + gate humano): auditar vs. `slice_contract §2 fila 010` y brief L0;
-   emitir `APROBADO`/`REQUIERE SUBSANACIÓN`.
-4. Tras la verificación: **continuar celda por celda** (`015_onboarding` → `075_monitoring`) acumulando snapshots.
+1. **Probar** (contexto fresco C-test, TR-2): ejecutar el agente `foda-discovery` sobre los cuestionarios de
+   C1 → producir los 3 contratos en `deliverables/` → correr `validate_discovery.py` → verificar `ok: true`
+   y las 7 aserciones de `cell_contract.md`. Validar determinismo (A6: ejecutar la skill dos veces sobre el
+   mismo output y comparar byte a byte). **Nota de ambiente:** en Windows Git Bash los `cp` seguidos de
+   comandos tienen condición de carrera; preparar fixtures dentro de un único script Python (`L-014`).
+2. **Verificar** (contexto fresco C-verify + gate humano): auditar vs. `slice_contract §2 fila 010` y brief
+   L0; emitir `APROBADO`/`REQUIERE SUBSANACIÓN`.
+3. Tras la verificación: **continuar celda por celda** (`015_onboarding` → `075_monitoring`) acumulando snapshots.
 
 ## Bitácora
+
+### 2026-07-01 (sesión 3)
+- **Paso Ejecutar de T-024 completado:** construidos los 4 artefactos de la celda `010_discovery` L0 en el orden del plan (`cell_contract → schema → skill → agente`).
+- **`contract/cell_contract.md`:** Done L0 acotado del brief §6 + 7 aserciones RED (A1–A6 verificables por skill, A7 gate humano), formato del `validation_report.json` y trazabilidad completa.
+- **`schemas/contract_data.schema.json`:** JSON Schema draft-07, 7 campos obligatorios (`archivos_esperados`, `medio_acceso`, `periodicidad`, `horizonte_meses`, `grain.{producto,geografia}`, `financieros_en_fuente`); `grain` con `additionalProperties: false`; enums de medio/periodicidad. Verificado: valida sample C1 y rechaza `periodicidad: "diaria"`.
+- **`skills/validate_discovery.py`:** skill determinista CLI (`--deliverables --schema --report`). Cubre A1 (existencia + parseo), A2 (jsonschema), A3 (consistencia registro⇄contrato: periodicidad, horizonte y niveles de grain), A4 (regex `testeable_en:`), A5 (≥3 áreas). Sin timestamps. Probada: happy path ✅, determinismo ✅ (2 corridas idénticas), 7 casos negativos ✅.
+- **`agents/foda-discovery.md`:** worker de síntesis NL→artefactos; `tools: Read, Write, Bash` (opción A, usuario confirmó); sin `Agent` (modelo plano D-009); claves exactas de YAML que la skill coteja; consistencia grain documentada (D-014); invoca la skill en paso 6 y reporta solo el path del reporte (E6).
+- **Reconciliación:** la contradicción `tools: Read, Write` en diseño y plan aprobados (que también pedían "invocar la skill") quedó resuelta actualizando ambos a `Read, Write, Bash` (D-030).
+- **Lección `L-014`:** condición de carrera en Windows Git Bash al encadenar `cp` + comando en el mismo invocation block. Solución: preparar fixtures y correr la skill dentro de un único proceso Python.
+- **Próximo paso:** Probar en sesión fresca (C-test, TR-2) → Verificar (C-verify + gate humano).
 
 ### 2026-07-01 (sesión 2)
 - **Inicio de celda `010_discovery` L0** siguiendo el protocolo `D-029`: primeros dos pasos del ciclo completados y aprobados por el usuario.

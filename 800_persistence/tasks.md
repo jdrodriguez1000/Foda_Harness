@@ -25,7 +25,7 @@
 
 | ID | Estado | Tarea |
 |----|--------|-------|
-| T-024 | `[~]` | **Construir la celda `010_discovery` L0** (Tracer Bullet) aplicando `D-029`. Diseñar (`705_design/tracer-bullet/010_discovery.md`) ✅ · Planear (`710_plan/tracer-bullet/010_discovery.md`) ✅ · **Ejecutar** → Probar (fresco) → Verificar (fresco + gate humano) pendientes. |
+| T-024 | `[~]` | **Construir la celda `010_discovery` L0** (Tracer Bullet) aplicando `D-029`. Diseñar ✅ · Planear ✅ · **Ejecutar** ✅ (4 artefactos construidos) · **Probar** (fresco C-test) → Verificar (fresco C-verify + gate humano) pendientes. |
 
 ## Pendientes
 

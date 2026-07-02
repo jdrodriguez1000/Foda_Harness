@@ -30,7 +30,7 @@ simple (aprobar/rechazar). **No** hay intake en vivo, ni documentos legibles ric
 ## 3. Componentes de la celda (`720_build/tracer-bullet/010_discovery/`)
 
 - **`agents/foda-discovery.md`** — worker del flujo (síntesis LLM). Lee los 2 cuestionarios y **redacta**
-  los 3 artefactos. `tools: Read, Write` (+ invoca la skill). Sin `Agent` (modelo plano `D-009`).
+  los 3 artefactos. `tools: Read, Write, Bash` (`Bash` para invocar la skill al final). Sin `Agent` (modelo plano `D-009`).
   Reparto síntesis↔determinismo (`design_system.md §6`): la **síntesis NL→estructura** es del agente; la
   **validación y consistencia** es de la skill.
 - **`skills/validate_discovery.py`** — código determinista (Python, stdlib + `pyyaml`). Valida:
